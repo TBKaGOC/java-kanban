@@ -3,10 +3,11 @@ package manager;
 import model.Task;
 import utility.TaskUtilities;
 
-import java.util.ArrayList;
+import java.util.LinkedList;
+import java.util.List;
 
 public class InMemoryHistoryManager implements HistoryManager {
-    private ArrayList<Task> history = new ArrayList<>(10);
+    private List<Task> history = new LinkedList<>();
 
     @Override
     public void add(Task task) {
@@ -14,12 +15,12 @@ public class InMemoryHistoryManager implements HistoryManager {
     }
 
     @Override
-    public ArrayList<Task> getHistory() {
-        return (ArrayList<Task>) history.clone();
+    public List<Task> getHistory() {
+        return history;
     }
 
     @Override
     public void remove() {
-        history = new ArrayList<>(10);
+        history = new LinkedList<>();
     }
 }

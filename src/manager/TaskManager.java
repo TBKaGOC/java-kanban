@@ -2,17 +2,17 @@ package manager;
 
 import model.*;
 
-import java.util.HashMap;
+import java.util.Map;
 
 public interface TaskManager {
     //Получение коллекций с задачами
-    HashMap<Integer, Task> getTasks();
+    Map<Integer, Task> getTasks();
 
-    HashMap<Integer, EpicTask> getEpicTasks();
+    Map<Integer, EpicTask> getEpicTasks();
 
-    HashMap<Integer, Subtask> getSubtasks();
+    Map<Integer, Subtask> getSubtasks();
 
-    HashMap<Integer, Subtask> getSubtasksOfEpic(int epicId);
+    Map<Integer, Subtask> getSubtasksOfEpic(int epicId);
 
     //Удаление всех задач
     void deleteAllTasks();

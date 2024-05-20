@@ -1,9 +1,10 @@
 package model;
 
 import java.util.HashMap;
+import java.util.Map;
 
 public class EpicTask extends Task {
-    private HashMap<Integer, Subtask> subtasks;
+    private Map<Integer, Subtask> subtasks;
     public EpicTask(String title, String description, TaskStatus status, int id) {
         super(title, description, status, id);
         subtasks = new HashMap<>();
@@ -13,7 +14,7 @@ public class EpicTask extends Task {
         subtasks.put(id, subtask);
     }
 
-    public HashMap<Integer, Subtask> getSubtasks() {
+    public Map<Integer, Subtask> getSubtasks() {
         return subtasks;
     }
 

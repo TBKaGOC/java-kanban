@@ -2,13 +2,12 @@ package manager;
 
 import model.*;
 
-import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.*;
 
 public class InMemoryTaskManager implements TaskManager{
-    private HashMap<Integer, Task> tasks;
-    private HashMap<Integer, EpicTask> epicTasks;
-    private HashMap<Integer, Subtask> subtasks;
+    private Map<Integer, Task> tasks;
+    private Map<Integer, EpicTask> epicTasks;
+    private Map<Integer, Subtask> subtasks;
     private static int id = 0;
 
     public InMemoryTaskManager() {
@@ -18,19 +17,19 @@ public class InMemoryTaskManager implements TaskManager{
     }
 
     //Получение коллекций с задачами
-    public HashMap<Integer, Task> getTasks() {
-        return (HashMap<Integer, Task>) tasks.clone();
+    public Map<Integer, Task> getTasks() {
+        return tasks;
     }
 
-    public HashMap<Integer, EpicTask> getEpicTasks() {
-        return (HashMap<Integer, EpicTask>) epicTasks.clone();
+    public Map<Integer, EpicTask> getEpicTasks() {
+        return epicTasks;
     }
 
-    public HashMap<Integer, Subtask> getSubtasks() {
-        return (HashMap<Integer, Subtask>) subtasks.clone();
+    public Map<Integer, Subtask> getSubtasks() {
+        return subtasks;
     }
 
-    public HashMap<Integer, Subtask> getSubtasksOfEpic(int epicId) {
+    public Map<Integer, Subtask> getSubtasksOfEpic(int epicId) {
         if (epicTasks.containsKey(epicId)) {
             return epicTasks.get(epicId).getSubtasks();
         } else {
@@ -160,7 +159,7 @@ public class InMemoryTaskManager implements TaskManager{
 
     //Определение статуса эпика
     public void setEpicTaskStatus(EpicTask task) {
-        ArrayList<Subtask> subtasksOfEpic = new ArrayList<>(task.getSubtasks().values());
+        List<Subtask> subtasksOfEpic = new ArrayList<>(task.getSubtasks().values());
         if (!subtasksOfEpic.isEmpty()) {
             TaskStatus resultStatus = subtasksOfEpic.getFirst().getStatus();
 
