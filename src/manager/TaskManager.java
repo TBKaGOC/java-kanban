@@ -1,10 +1,7 @@
 package manager;
 
-import model.EpicTask;
-import model.Subtask;
-import model.Task;
+import model.*;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 
 public interface TaskManager {

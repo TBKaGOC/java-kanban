@@ -1,15 +1,12 @@
 package manager.test;
 
-import manager.InMemoryTaskManager;
-import manager.Managers;
-import manager.TaskManager;
+import manager.*;
 import model.*;
 
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 
 public class InMemoryTaskManagerTest {
