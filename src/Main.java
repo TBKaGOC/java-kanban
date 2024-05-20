@@ -1,4 +1,4 @@
-import manager.ManagerOfTasks;
+import manager.InMemoryTaskManager;
 import model.*;
 
 public class Main {
@@ -6,27 +6,27 @@ public class Main {
     public static void main(String[] args) {
         //Тестирование функционала
         Task task1 = new Task("1task", "1thForExamination",
-                TaskStatus.NEW, ManagerOfTasks.getNewId());
+                TaskStatus.NEW, InMemoryTaskManager.getNewId());
         Task task2 = new Task("2task", "2thForExamination",
-                TaskStatus.IN_PROGRESS, ManagerOfTasks.getNewId());
+                TaskStatus.IN_PROGRESS, InMemoryTaskManager.getNewId());
         Task task3 = new Task("3task", "3thForExamination",
-                TaskStatus.DONE, ManagerOfTasks.getNewId());
+                TaskStatus.DONE, InMemoryTaskManager.getNewId());
 
         EpicTask eTask1 = new EpicTask("1task", "1thForExamination",
-                TaskStatus.NEW, ManagerOfTasks.getNewId());
+                TaskStatus.NEW, InMemoryTaskManager.getNewId());
         EpicTask eTask2 = new EpicTask("2task", "2thForExamination",
-                TaskStatus.IN_PROGRESS, ManagerOfTasks.getNewId());
+                TaskStatus.IN_PROGRESS, InMemoryTaskManager.getNewId());
         EpicTask eTask3 = new EpicTask("3task", "3thForExamination",
-                TaskStatus.DONE, ManagerOfTasks.getNewId());
+                TaskStatus.DONE, InMemoryTaskManager.getNewId());
 
         Subtask sTask1 = new Subtask("1task", "1thForExamination",
-                TaskStatus.NEW, ManagerOfTasks.getNewId());
+                TaskStatus.NEW, InMemoryTaskManager.getNewId());
         Subtask sTask2 = new Subtask("2task", "2thForExamination",
-                TaskStatus.DONE, ManagerOfTasks.getNewId());
+                TaskStatus.DONE, InMemoryTaskManager.getNewId());
         Subtask sTask3 = new Subtask("3task", "3thForExamination",
-                TaskStatus.DONE, ManagerOfTasks.getNewId());
+                TaskStatus.DONE, InMemoryTaskManager.getNewId());
 
-        ManagerOfTasks manager = new ManagerOfTasks();
+        InMemoryTaskManager manager = new InMemoryTaskManager();
 
         //Проверка добавления
         manager.addTask(task1);
