@@ -1,5 +1,8 @@
-package manager;
+package manager.test;
 
+import manager.InMemoryTaskManager;
+import manager.Managers;
+import manager.TaskManager;
 import model.*;
 
 import org.junit.jupiter.api.Assertions;
@@ -32,14 +35,14 @@ public class InMemoryTaskManagerTest {
     private static Subtask sTask3 = new Subtask("3task", "3thForExamination",
             TaskStatus.DONE, InMemoryTaskManager.getNewId());
 
-    private static InMemoryTaskManager manager = new InMemoryTaskManager();
+    private static TaskManager manager = Managers.getDefault();
 
     @BeforeEach
     public void addAll() {
         manager.deleteAllTasks();
         manager.deleteAllEpicTasks();
         manager.deleteAllSubtasks();
-        manager.removeHistory();
+        Managers.getDefaultHistory().remove();
 
         manager.addTask(task1);
         manager.addTask(task2);
@@ -68,12 +71,12 @@ public class InMemoryTaskManagerTest {
 
     @Test
     public void shouldAddEpicTaskToMemory() {
-        Assertions.assertTrue(manager.containsEpicTask(eTask1));
+        Assertions.assertTrue(manager.containsTask(eTask1));
     }
 
     @Test
     public void shouldAddSubtaskToMemory() {
-        Assertions.assertTrue(manager.containsSubtask(sTask1));
+        Assertions.assertTrue(manager.containsTask(sTask1));
     }
 
     @Test
@@ -151,19 +154,6 @@ public class InMemoryTaskManagerTest {
         Assertions.assertEquals(manager.getSubtask(new1.getId()), new1);
     }
 
-
-    @Test
-    public void shouldGetRightHistoryOf10EndTaskFromMemory() {
-        ArrayList<Task> history = new ArrayList<>();
-        history.add(eTask3);
-        history.add(sTask1);
-
-        manager.getEpicTask(eTask3.getId());
-        manager.getSubtask(sTask1.getId());
-
-        Assertions.assertEquals(manager.getHistory(), history);
-    }
-
     @Test
     public void shouldDeleteTaskInMemory() {
         manager.deleteTask(task1.getId());
@@ -173,12 +163,12 @@ public class InMemoryTaskManagerTest {
     @Test
     public void shouldDeleteEpicTaskInMemory() {
         manager.deleteEpicTask(eTask1.getId());
-        Assertions.assertFalse(manager.containsEpicTask(eTask1));
+        Assertions.assertFalse(manager.containsTask(eTask1));
     }
 
     @Test
     public void shouldDeleteSubtaskInMemory() {
         manager.deleteSubtask(sTask1.getId());
-        Assertions.assertFalse(manager.containsSubtask(sTask1));
+        Assertions.assertFalse(manager.containsTask(sTask1));
     }
 }

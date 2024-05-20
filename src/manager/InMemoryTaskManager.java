@@ -1,7 +1,6 @@
 package manager;
 
 import model.*;
-import utility.TaskUtilities;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -10,7 +9,6 @@ public class InMemoryTaskManager implements TaskManager{
     private HashMap<Integer, Task> tasks;
     private HashMap<Integer, EpicTask> epicTasks;
     private HashMap<Integer, Subtask> subtasks;
-    private ArrayList<Task> history = new ArrayList<>(10);
     private static int id = 0;
 
     public InMemoryTaskManager() {
@@ -69,19 +67,19 @@ public class InMemoryTaskManager implements TaskManager{
     //Получение определённых задач
     @Override
     public Task getTask(int id) {
-        TaskUtilities.addToEndList(history, tasks.get(id));
+        Managers.getDefaultHistory().add(tasks.get(id));
         return tasks.getOrDefault(id, null);
     }
 
     @Override
     public EpicTask getEpicTask(int id) {
-        TaskUtilities.addToEndList(history, epicTasks.get(id));
+        Managers.getDefaultHistory().add(epicTasks.get(id));
         return epicTasks.getOrDefault(id, null);
     }
 
     @Override
     public Subtask getSubtask(int id) {
-        TaskUtilities.addToEndList(history, subtasks.get(id));
+        Managers.getDefaultHistory().add(subtasks.get(id));
         return subtasks.getOrDefault(id, null);
     }
 
@@ -154,16 +152,10 @@ public class InMemoryTaskManager implements TaskManager{
     public void deleteSubtask(int id) {
         subtasks.remove(id);
 
-        for (EpicTask epic: epicTasks.values()) {
+        for (EpicTask epic : epicTasks.values()) {
             epic.deleteSubtask(id);
             setEpicTaskStatus(epic);
         }
-    }
-
-    //Получение и отчищение истории
-    @Override
-    public ArrayList<Task> getHistory() {
-        return (ArrayList<Task>) history.clone();
     }
 
     //Определение статуса эпика
@@ -183,25 +175,19 @@ public class InMemoryTaskManager implements TaskManager{
         }
     }
 
-    public void removeHistory() {
-        history = new ArrayList<>();
-    }
-
     public static int getNewId() {
         id++;
         return id;
     }
 
-    //Проверка содержания
+    @Override
     public boolean containsTask(Task task) {
-        return tasks.containsValue(task);
-    }
-
-    public boolean containsEpicTask(EpicTask task) {
-        return epicTasks.containsValue(task);
-    }
-
-    public boolean containsSubtask(Subtask task) {
-        return subtasks.containsValue(task);
+        if (task instanceof EpicTask) {
+            return epicTasks.containsValue(task);
+        } else if (task instanceof Subtask) {
+            return subtasks.containsValue(task);
+        } else {
+            return tasks.containsValue(task);
+        }
     }
 }

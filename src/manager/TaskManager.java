@@ -52,5 +52,5 @@ public interface TaskManager {
 
     void deleteSubtask(int id);
 
-    ArrayList<Task> getHistory();
+    boolean containsTask(Task task);
 }
