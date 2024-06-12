@@ -1,0 +1,47 @@
+[33mcommit fe62674012d56ed57b3309783b30e4420d06aacd[m[33m ([m[1;36mHEAD[m[33m -> [m[1;32mmain[m[33m, [m[1;31morigin/main[m[33m, [m[1;31morigin/HEAD[m[33m)[m
+Author: GOfC <guardianofchaos6@gmail.com>
+Date:   Mon May 20 20:47:57 2024 +0300
+
+    Реализованны предложения, исправленны замечания, вместо ArrayList использовае List, так как у Collection я не обнаружил метода get() или его аналога
+
+[33mcommit 73fdba56b84bc29d768138124b5c8813530e75cd[m
+Author: GOfC <guardianofchaos6@gmail.com>
+Date:   Mon May 20 18:21:37 2024 +0300
+
+    Убранны излишние импорты
+
+[33mcommit e6e7d9c1063c65771f663255a3f27b375e27a3c2[m
+Author: GOfC <guardianofchaos6@gmail.com>
+Date:   Mon May 20 18:18:07 2024 +0300
+
+    Добавлен интерфейс, класс и тесты для истории получения тасков
+
+[33mcommit 18b9d1b74de6c965645ee3992c1390c55edd9924[m
+Author: GOfC <guardianofchaos6@gmail.com>
+Date:   Mon May 20 17:36:18 2024 +0300
+
+    Удаленно тестирование в main.Main
+
+[33mcommit 94f03e24dff69e2ace772c6c0b6a22d2982a32f1[m
+Author: GOfC <guardianofchaos6@gmail.com>
+Date:   Mon May 20 17:34:47 2024 +0300
+
+    Добавлен интерфейс менеджера, добавлено тестирование для InMemoryTaskManager(бывший ManagerOfTasks), добавленно сохранение истории просмотра десяти последних тасков
+
+[33mcommit a3de1995ed2cea80fc913a3d0424c826259753f6[m
+Author: GOfC <guardianofchaos6@gmail.com>
+Date:   Fri May 3 21:40:52 2024 +0300
+
+    Добавлены пакеты, выполнено тестирование функционала в методе main, переделано определение статуса эпик задачи, code переименованна в id
+
+[33mcommit e32c05e731baa0cc6823a7f971717e4309cf070b[m
+Author: GOfC <guardianofchaos6@gmail.com>
+Date:   Fri May 3 16:19:35 2024 +0300
+
+    Выполнен требуемый функционал
+
+[33mcommit 232a257d7c67ef389d7cf6417d8bdb4b028ad044[m
+Author: TBKaGOC <167219791+TBKaGOC@users.noreply.github.com>
+Date:   Fri May 3 10:29:59 2024 +0300
+
+    Initial commit
