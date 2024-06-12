@@ -6,7 +6,7 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import java.util.ArrayList;
+import java.util.*;
 
 public class InMemoryHistoryManagerTest {
     private static Task task1 = new Task("1task", "1thForExamination",
@@ -61,29 +61,17 @@ public class InMemoryHistoryManagerTest {
     }
 
     @Test
-    public void shouldGetHistoryOfLast10Elements() {
-        ArrayList<Task> history = new ArrayList<>(10);
-        history.add(task1);
+    public void shouldGetHistoryOfLastElements() {
+        List<Task> history = new ArrayList<>();
         history.add(task2);
         history.add(task3);
-        history.add(eTask1);
-        history.add(eTask3);
-        history.add(eTask2);
-        history.add(sTask2);
-        history.add(sTask2);
-        history.add(sTask3);
-        history.add(sTask1);
+        history.add(task1);
 
-        manager.getTask(task1.getId());
+
         manager.getTask(task2.getId());
+        manager.getTask(task1.getId());
         manager.getTask(task3.getId());
-        manager.getEpicTask(eTask1.getId());
-        manager.getEpicTask(eTask3.getId());
-        manager.getEpicTask(eTask2.getId());
-        manager.getSubtask(sTask2.getId());
-        manager.getSubtask(sTask2.getId());
-        manager.getSubtask(sTask3.getId());
-        manager.getSubtask(sTask1.getId());
+        manager.getTask(task1.getId());
 
         Assertions.assertEquals(Managers.getDefaultHistory().getHistory(), history);
     }

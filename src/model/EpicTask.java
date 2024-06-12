@@ -28,6 +28,10 @@ public class EpicTask extends Task {
         subtasks.remove(id);
     }
 
+    public boolean containsSubtask(int id) {
+        return subtasks.containsKey(id);
+    }
+
     public void updatingSubtask(int id, Subtask sub) {
         if (subtasks.containsKey(id)) {
             subtasks.replace(id, sub);

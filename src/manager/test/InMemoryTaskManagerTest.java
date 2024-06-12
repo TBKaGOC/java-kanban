@@ -168,4 +168,10 @@ public class InMemoryTaskManagerTest {
         manager.deleteSubtask(sTask1.getId());
         Assertions.assertFalse(manager.containsTask(sTask1));
     }
+
+    @Test
+    public void shouldEpicTaskContainsIdDeletedSubtask() {
+        manager.deleteSubtask(sTask1.getId());
+        Assertions.assertFalse(eTask1.containsSubtask(sTask1.getId()));
+    }
 }
