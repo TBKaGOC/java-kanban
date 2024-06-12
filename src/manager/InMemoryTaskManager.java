@@ -6,7 +6,7 @@ import java.util.*;
 
 import static manager.Managers.getDefaultHistory;
 
-public class InMemoryTaskManager implements TaskManager{
+public class InMemoryTaskManager implements TaskManager {
     private Map<Integer, Task> tasks;
     private Map<Integer, EpicTask> epicTasks;
     private Map<Integer, Subtask> subtasks;
@@ -47,7 +47,7 @@ public class InMemoryTaskManager implements TaskManager{
     @Override
     public void deleteAllTasks() {
         if (!tasks.isEmpty()) {
-            for (Integer id: tasks.keySet()){
+            for (Integer id: tasks.keySet()) {
                 getDefaultHistory().remove(id);
             }
             tasks = new HashMap<>();
@@ -57,13 +57,13 @@ public class InMemoryTaskManager implements TaskManager{
     @Override
     public void deleteAllEpicTasks() {
         if (!epicTasks.isEmpty()) {
-            for (Integer id: epicTasks.keySet()){
+            for (Integer id: epicTasks.keySet()) {
                 getDefaultHistory().remove(id);
             }
             epicTasks = new HashMap<>();
         }
         if (!subtasks.isEmpty()) {
-            for (Integer id: subtasks.keySet()){
+            for (Integer id: subtasks.keySet()) {
                 getDefaultHistory().remove(id);
             }
             subtasks = new HashMap<>();
@@ -73,7 +73,7 @@ public class InMemoryTaskManager implements TaskManager{
     @Override
     public void deleteAllSubtasks() {
         if (!subtasks.isEmpty()) {
-            for (Integer id: subtasks.keySet()){
+            for (Integer id: subtasks.keySet()) {
                 getDefaultHistory().remove(id);
             }
             subtasks = new HashMap<>();
