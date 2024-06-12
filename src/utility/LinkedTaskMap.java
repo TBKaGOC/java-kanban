@@ -5,7 +5,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class LinkedTaskMap<K, V> {
-    private final Map<K, Node<V>> map = new HashMap<> ();
+    private final Map<K, Node<V>> map = new HashMap<>();
     private Node<V> head;
     private Node<V> tail;
     private int size = 0;
@@ -15,7 +15,7 @@ public class LinkedTaskMap<K, V> {
         Node<V> next;
         Node<V> prev;
 
-        Node (V value) {
+        Node(V value) {
             this.value = value;
         }
 
