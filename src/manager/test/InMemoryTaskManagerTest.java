@@ -61,6 +61,7 @@ public class InMemoryTaskManagerTest {
         manager.addSubtask(sTask2, eTask3.getId());
         manager.addSubtask(sTask3, eTask3.getId());
     }
+
     @Test
     public void shouldAddTaskToMemory() {
         Assertions.assertTrue(manager.containsTask(task1));
