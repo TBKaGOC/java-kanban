@@ -1,7 +1,7 @@
-package manager;
+package main.manager;
 
-import model.Task;
-import utility.LinkedTaskMap;
+import main.model.Task;
+import main.utility.LinkedTaskMap;
 
 import java.util.ArrayList;
 

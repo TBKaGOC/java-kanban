@@ -1,10 +1,10 @@
 package test;
 
-import model.Task;
-import model.TaskStatus;
+import main.model.Task;
+import main.model.TaskStatus;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
-import utility.LinkedTaskMap;
+import main.utility.LinkedTaskMap;
 
 public class LinkedTaskMapTest {
     @Test

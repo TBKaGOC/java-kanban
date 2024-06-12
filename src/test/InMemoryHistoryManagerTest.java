@@ -1,7 +1,7 @@
 package test;
 
-import manager.*;
-import model.*;
+import main.manager.*;
+import main.model.*;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;

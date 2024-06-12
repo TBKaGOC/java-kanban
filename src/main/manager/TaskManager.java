@@ -1,6 +1,6 @@
-package manager;
+package main.manager;
 
-import model.*;
+import main.model.*;
 
 import java.util.Map;
 

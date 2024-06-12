@@ -1,10 +1,10 @@
-package manager;
+package main.manager;
 
-import model.*;
+import main.model.*;
 
 import java.util.*;
 
-import static manager.Managers.getDefaultHistory;
+import static main.manager.Managers.getDefaultHistory;
 
 public class InMemoryTaskManager implements TaskManager {
     private Map<Integer, Task> tasks;

@@ -1,4 +1,4 @@
-package model;
+package main.model;
 
 public class Subtask extends Task {
     public Subtask(String title, String description, TaskStatus status, int id) {
