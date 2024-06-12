@@ -1,4 +1,4 @@
-package manager.test;
+package test;
 
 import manager.*;
 import model.*;
