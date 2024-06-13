@@ -2,13 +2,13 @@ package main.utility;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 public class LinkedTaskMap<K, V> {
-    private final Map<K, Node<V>> map = new HashMap<>();
+    private final Map<K, Node<V>> map;
     private Node<V> head;
     private Node<V> tail;
-    private int size = 0;
 
     private static class Node<V> {
         V value;
@@ -33,6 +33,10 @@ public class LinkedTaskMap<K, V> {
         }
     }
 
+    public LinkedTaskMap() {
+        map = new HashMap<>();
+    }
+
     public void put(K key, V value) {
         Node<V> newNode = new Node<>(value);
 
@@ -46,7 +50,6 @@ public class LinkedTaskMap<K, V> {
         }
 
         map.put(key, newNode);
-        size++;
     }
 
     public void remove(K key) {
@@ -72,12 +75,11 @@ public class LinkedTaskMap<K, V> {
             }
 
             map.remove(key);
-            size--;
         }
     }
 
-    public ArrayList<V> values() {
-        ArrayList<V> res = new ArrayList<>(map.size());
+    public List<V> values() {
+        List<V> res = new ArrayList<>(map.size());
         Node<V> next = head;
 
         while (next != null) {
@@ -90,9 +92,5 @@ public class LinkedTaskMap<K, V> {
 
     public boolean containsKey(K key) {
         return map.containsKey(key);
-    }
-
-    public boolean containsValue(V value) {
-        return map.containsValue(value);
     }
 }

@@ -3,7 +3,7 @@ package main.manager;
 import main.model.Task;
 import main.utility.LinkedTaskMap;
 
-import java.util.ArrayList;
+import java.util.List;
 
 public class InMemoryHistoryManager implements HistoryManager {
     private LinkedTaskMap<Integer, Task> history = new LinkedTaskMap<>();
@@ -15,7 +15,7 @@ public class InMemoryHistoryManager implements HistoryManager {
     }
 
     @Override
-    public ArrayList<Task> getHistory() {
+    public List<Task> getHistory() {
         return history.values();
     }
 

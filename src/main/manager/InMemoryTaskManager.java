@@ -4,15 +4,15 @@ import main.model.*;
 
 import java.util.*;
 
-import static main.manager.Managers.getDefaultHistory;
-
 public class InMemoryTaskManager implements TaskManager {
     private Map<Integer, Task> tasks;
     private Map<Integer, EpicTask> epicTasks;
     private Map<Integer, Subtask> subtasks;
+    private HistoryManager history;
     private static int id = 0;
 
-    public InMemoryTaskManager() {
+    public InMemoryTaskManager(HistoryManager history) {
+        this.history = history;
         tasks = new HashMap<>();
         epicTasks = new HashMap<>();
         subtasks = new HashMap<>();
@@ -48,7 +48,7 @@ public class InMemoryTaskManager implements TaskManager {
     public void deleteAllTasks() {
         if (!tasks.isEmpty()) {
             for (Integer id: tasks.keySet()) {
-                getDefaultHistory().remove(id);
+                history.remove(id);
             }
             tasks = new HashMap<>();
         }
@@ -58,13 +58,13 @@ public class InMemoryTaskManager implements TaskManager {
     public void deleteAllEpicTasks() {
         if (!epicTasks.isEmpty()) {
             for (Integer id: epicTasks.keySet()) {
-                getDefaultHistory().remove(id);
+                history.remove(id);
             }
             epicTasks = new HashMap<>();
         }
         if (!subtasks.isEmpty()) {
             for (Integer id: subtasks.keySet()) {
-                getDefaultHistory().remove(id);
+                history.remove(id);
             }
             subtasks = new HashMap<>();
         }
@@ -74,7 +74,7 @@ public class InMemoryTaskManager implements TaskManager {
     public void deleteAllSubtasks() {
         if (!subtasks.isEmpty()) {
             for (Integer id: subtasks.keySet()) {
-                getDefaultHistory().remove(id);
+                history.remove(id);
             }
             subtasks = new HashMap<>();
             for (EpicTask epic: epicTasks.values()) {
@@ -87,19 +87,19 @@ public class InMemoryTaskManager implements TaskManager {
     //Получение определённых задач
     @Override
     public Task getTask(int id) {
-        getDefaultHistory().add(tasks.get(id));
+        history.add(tasks.get(id));
         return tasks.getOrDefault(id, null);
     }
 
     @Override
     public EpicTask getEpicTask(int id) {
-        getDefaultHistory().add(epicTasks.get(id));
+        history.add(epicTasks.get(id));
         return epicTasks.getOrDefault(id, null);
     }
 
     @Override
     public Subtask getSubtask(int id) {
-        getDefaultHistory().add(subtasks.get(id));
+        history.add(subtasks.get(id));
         return subtasks.getOrDefault(id, null);
     }
 
@@ -162,18 +162,18 @@ public class InMemoryTaskManager implements TaskManager {
     @Override
     public void deleteTask(int id) {
         tasks.remove(id);
-        getDefaultHistory().remove(id);
+        history.remove(id);
     }
 
     @Override
     public void deleteEpicTask(int id) {
         for (Subtask s: epicTasks.get(id).getSubtasks().values()) {
             subtasks.remove(s);
-            getDefaultHistory().remove(s.getId());
+            history.remove(s.getId());
         }
 
         epicTasks.remove(id);
-        getDefaultHistory().remove(id);
+        history.remove(id);
     }
 
     @Override
@@ -185,7 +185,7 @@ public class InMemoryTaskManager implements TaskManager {
             setEpicTaskStatus(epic);
         }
 
-        getDefaultHistory().remove(id);
+        history.remove(id);
     }
 
     //Определение статуса эпика
