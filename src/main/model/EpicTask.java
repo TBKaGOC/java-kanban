@@ -1,10 +1,11 @@
-package model;
+package main.model;
 
 import java.util.HashMap;
 import java.util.Map;
 
 public class EpicTask extends Task {
     private Map<Integer, Subtask> subtasks;
+
     public EpicTask(String title, String description, TaskStatus status, int id) {
         super(title, description, status, id);
         subtasks = new HashMap<>();
@@ -26,6 +27,10 @@ public class EpicTask extends Task {
 
     public void deleteSubtask(int id) {
         subtasks.remove(id);
+    }
+
+    public boolean containsSubtask(int id) {
+        return subtasks.containsKey(id);
     }
 
     public void updatingSubtask(int id, Subtask sub) {

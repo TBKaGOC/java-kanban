@@ -1,7 +1,7 @@
-package manager.test;
+package test;
 
-import manager.*;
-import model.*;
+import main.manager.*;
+import main.model.*;
 
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
@@ -61,6 +61,7 @@ public class InMemoryTaskManagerTest {
         manager.addSubtask(sTask2, eTask3.getId());
         manager.addSubtask(sTask3, eTask3.getId());
     }
+
     @Test
     public void shouldAddTaskToMemory() {
         Assertions.assertTrue(manager.containsTask(task1));
@@ -167,5 +168,11 @@ public class InMemoryTaskManagerTest {
     public void shouldDeleteSubtaskInMemory() {
         manager.deleteSubtask(sTask1.getId());
         Assertions.assertFalse(manager.containsTask(sTask1));
+    }
+
+    @Test
+    public void shouldEpicTaskContainsIdDeletedSubtask() {
+        manager.deleteSubtask(sTask1.getId());
+        Assertions.assertFalse(eTask1.containsSubtask(sTask1.getId()));
     }
 }
