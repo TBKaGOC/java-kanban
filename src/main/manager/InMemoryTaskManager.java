@@ -220,4 +220,17 @@ public class InMemoryTaskManager implements TaskManager {
             return tasks.containsValue(task);
         }
     }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        InMemoryTaskManager that = (InMemoryTaskManager) o;
+        return Objects.equals(tasks, that.tasks) && Objects.equals(epicTasks, that.epicTasks) && Objects.equals(subtasks, that.subtasks);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(tasks, epicTasks, subtasks);
+    }
 }

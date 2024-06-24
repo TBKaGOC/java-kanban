@@ -48,6 +48,10 @@ public class Task {
         return description;
     }
 
+    public String createStringToSave() {
+        return getId() + ",TASK," + getTitle() + "," + getStatus() + "," + getDescription();
+    }
+
     @Override
     public String toString() {
         return "Task{" +

@@ -6,6 +6,11 @@ public class Subtask extends Task {
     }
 
     @Override
+    public String createStringToSave() {
+        return getId() + ",SUBTASK," + getTitle() + "," + getStatus() + "," + getDescription();
+    }
+
+    @Override
     public String toString() {
         return "Subtask{" +
                 "title='" + getTitle() + '\'' +
