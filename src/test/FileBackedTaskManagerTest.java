@@ -39,7 +39,7 @@ public class FileBackedTaskManagerTest {
     private static FileBackedTaskManager manager = new FileBackedTaskManager(Managers.getDefaultHistory(), null);
 
     @BeforeEach
-    public void addAll() throws IOException{
+    public void addAll() throws IOException {
         manager.deleteAllTasks();
         manager.deleteAllEpicTasks();
         manager.deleteAllSubtasks();
