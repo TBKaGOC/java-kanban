@@ -39,7 +39,7 @@ public class FileBackedTaskManagerTest {
     private static FileBackedTaskManager manager = new FileBackedTaskManager(Managers.getDefaultHistory(), null);
 
     @BeforeEach
-    public void addAll() {
+    public void addAll() throws IOException{
         manager.deleteAllTasks();
         manager.deleteAllEpicTasks();
         manager.deleteAllSubtasks();
@@ -47,12 +47,7 @@ public class FileBackedTaskManagerTest {
             manager.getFileToSave().delete();
         }
 
-        File file = null;
-        try {
-            file = File.createTempFile("save", ".txt");
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
+        File file = File.createTempFile("save", ".txt");
 
         manager.setFileToSave(file);
 
@@ -79,12 +74,12 @@ public class FileBackedTaskManagerTest {
 
     @Test
     public void shouldSaveAndLoadEqualsObject() {
-        try {
-            TaskManager taskManager = FileBackedTaskManager.loadFromFile(manager.getFileToSave());
+        TaskManager manager1 = FileBackedTaskManager.loadFromFile(manager.getFileToSave());
 
-            Assertions.assertEquals(taskManager, manager);
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
+        boolean equals = manager1.getTasks().equals(manager.getTasks());
+        equals = equals && manager1.getSubtasks().equals(manager.getSubtasks());
+        equals = equals && manager1.getEpicTasks().equals(manager.getEpicTasks());
+
+        Assertions.assertTrue(equals);
     }
 }
