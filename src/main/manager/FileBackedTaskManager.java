@@ -91,9 +91,10 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
                         String[] elementsOfEpic = elements[0].split(",");
 
                         int idOfEpic = Integer.parseInt(elementsOfEpic[0]);
+                        EpicTask epicTask = new EpicTask(elementsOfEpic[2], elementsOfEpic[4],
+                                getStatusFromString(elementsOfEpic[3]), idOfEpic);
 
-                        res.addEpicTask(new EpicTask(elementsOfEpic[2],
-                                elementsOfEpic[4], getStatusFromString(elementsOfEpic[3]), idOfEpic));
+                        res.addEpicTask(epicTask);
                         
                         if (elements.length == 2) {
                             String[] subtasks = elements[1].split(";");
