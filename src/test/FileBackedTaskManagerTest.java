@@ -8,9 +8,9 @@ import main.model.EpicTask;
 import main.model.Subtask;
 import main.model.Task;
 import main.model.TaskStatus;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.testng.Assert;
 
 import java.io.File;
 import java.io.IOException;
@@ -82,7 +82,7 @@ public class FileBackedTaskManagerTest {
         try {
             TaskManager taskManager = FileBackedTaskManager.loadFromFile(manager.getFileToSave());
 
-            Assert.assertEquals(taskManager, manager);
+            Assertions.assertEquals(taskManager, manager);
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
