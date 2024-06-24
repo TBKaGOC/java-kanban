@@ -7,12 +7,12 @@ import java.io.*;
 
 import static main.model.TaskStatus.getStatusFromString;
 
-public class FileBackedTaskManager extends InMemoryTaskManager{
+public class FileBackedTaskManager extends InMemoryTaskManager {
     private File fileToSave;
     private static final String exampleToSave = "id,type,name,status,description:::subtasksOfEpic";
+
     public FileBackedTaskManager(HistoryManager history, File fileToSave) {
         super(history);
-
         this.fileToSave = fileToSave;
     }
 
@@ -81,7 +81,7 @@ public class FileBackedTaskManager extends InMemoryTaskManager{
     public static TaskManager loadFromFile(File file) throws IOException {
         FileBackedTaskManager res = new FileBackedTaskManager(Managers.getDefaultHistory(), null);
 
-        try (BufferedReader reader = new BufferedReader(new FileReader(file))){
+        try (BufferedReader reader = new BufferedReader(new FileReader(file))) {
             String example = reader.readLine();
             if (example != null && example.equals(exampleToSave)) {
                 while (reader.ready()) {
@@ -92,10 +92,10 @@ public class FileBackedTaskManager extends InMemoryTaskManager{
 
                         int idOfEpic = Integer.parseInt(elementsOfEpic[0]);
 
-                        res.addEpicTask(new EpicTask(elementsOfEpic[2], elementsOfEpic[4],
-                                getStatusFromString(elementsOfEpic[3]), idOfEpic));
+                        res.addEpicTask(new EpicTask(elementsOfEpic[2],
+                                elementsOfEpic[4], getStatusFromString(elementsOfEpic[3]), idOfEpic));
                         
-                        if(elements.length == 2) {
+                        if (elements.length == 2) {
                             String[] subtasks = elements[1].split(";");
                             for (String subtask : subtasks) {
                                 String[] elementsOfSubtask = subtask.split(",");
