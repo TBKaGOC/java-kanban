@@ -79,7 +79,7 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
     }
 
     public static TaskManager loadFromFile(File file) throws IOException {
-        FileBackedTaskManager res = new FileBackedTaskManager(Managers.getDefaultHistory(), null);
+        FileBackedTaskManager resultForLoad = new FileBackedTaskManager(Managers.getDefaultHistory(), null);
 
         try (BufferedReader reader = new BufferedReader(new FileReader(file))) {
             String example = reader.readLine();
@@ -94,20 +94,19 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
                         EpicTask epicTask = new EpicTask(elementsOfEpic[2], elementsOfEpic[4],
                                 getStatusFromString(elementsOfEpic[3]), idOfEpic);
 
-                        res.addEpicTask(epicTask);
-                        
+                        resultForLoad.addEpicTask(epicTask);
                         if (elements.length == 2) {
                             String[] subtasks = elements[1].split(";");
                             for (String subtask : subtasks) {
                                 String[] elementsOfSubtask = subtask.split(",");
                                 Subtask sub = new Subtask(elementsOfSubtask[2], elementsOfSubtask[4],
                                         getStatusFromString(elementsOfSubtask[3]), Integer.parseInt(elementsOfSubtask[0]));
-                                res.addSubtask(sub, idOfEpic);
+                                resultForLoad.addSubtask(sub, idOfEpic);
                             }
                         }
                     } else {
                         String[] elements = task.split(",");
-                        res.addTask(new Task(elements[2], elements[4], getStatusFromString(elements[3]),
+                        resultForLoad.addTask(new Task(elements[2], elements[4], getStatusFromString(elements[3]),
                                 Integer.parseInt(elements[0])));
                     }
                 }
@@ -116,9 +115,9 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
             throw new RuntimeException(e);
         }
 
-        res.setFileToSave(file);
+        resultForLoad.setFileToSave(file);
 
-        return res;
+        return resultForLoad;
     }
 
     @Override
