@@ -40,6 +40,17 @@ public class EpicTask extends Task {
     }
 
     @Override
+    public String createStringToSave() {
+        StringBuilder builder = new StringBuilder(getId() + ",EPICTASK," + getTitle() + "," + getStatus() +
+                "," + getDescription() + ":::");
+
+        for (Subtask subtask: subtasks.values()) {
+            builder.append(subtask.createStringToSave() + ";");
+        }
+        return builder.toString();
+    }
+
+    @Override
     public String toString() {
         return "EpicTask{" +
                 "title='" + getTitle() + '\'' +
