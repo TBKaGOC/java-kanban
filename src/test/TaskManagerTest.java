@@ -331,6 +331,7 @@ public abstract class TaskManagerTest<T extends TaskManager> {
 
         Assertions.assertEquals(epicTaskForTest.getStatus(), TaskStatus.IN_PROGRESS);
     }
+
     @Test
     public void shouldCorrectSetEpicStatusWithNewAndDoneSubStatus() {
         Subtask testTask1 = new Subtask("tt1", "tt1", TaskStatus.NEW,
