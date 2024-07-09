@@ -11,14 +11,14 @@ import java.time.LocalDateTime;
 import java.util.*;
 
 public class InMemoryHistoryManagerTest {
-    private final static Task task1 = new Task("1task", "1thForExamination", TaskStatus.NEW,
+    private final Task task1 = new Task("1task", "1thForExamination", TaskStatus.NEW,
             InMemoryTaskManager.getNewId(), Duration.ofSeconds(1), LocalDateTime.now().minusSeconds(1000));
-    private final static Task task2 = new Task("2task", "2thForExamination", TaskStatus.IN_PROGRESS,
+    private final Task task2 = new Task("2task", "2thForExamination", TaskStatus.IN_PROGRESS,
             InMemoryTaskManager.getNewId(), Duration.ofSeconds(1), LocalDateTime.now().minusSeconds(2000));
-    private final static Task task3 = new Task("3task", "3thForExamination", TaskStatus.DONE,
+    private final Task task3 = new Task("3task", "3thForExamination", TaskStatus.DONE,
             InMemoryTaskManager.getNewId(), Duration.ofSeconds(1), LocalDateTime.now().minusSeconds(3000));
 
-    private static TaskManager manager = Managers.getDefault();
+    private final TaskManager manager = Managers.getDefault();
 
     @BeforeEach
     public void addAll() {
@@ -31,6 +31,7 @@ public class InMemoryHistoryManagerTest {
         manager.addTask(task2);
         manager.addTask(task3);
     }
+
     @Test
     public void shouldGetHistoryOfLastElements() {
         List<Task> history = new ArrayList<>();
