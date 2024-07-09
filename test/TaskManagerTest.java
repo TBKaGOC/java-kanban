@@ -21,32 +21,32 @@ import java.util.Set;
 import java.util.TreeSet;
 
 public abstract class TaskManagerTest<T extends TaskManager> {
-    private final static Task task1 = new Task("1task", "1thForExamination", TaskStatus.NEW,
+    private final Task task1 = new Task("1task", "1thForExamination", TaskStatus.NEW,
             InMemoryTaskManager.getNewId(), Duration.ofSeconds(1), LocalDateTime.now().minusSeconds(1000));
-    private final static Task task2 = new Task("2task", "2thForExamination", TaskStatus.IN_PROGRESS,
+    private final Task task2 = new Task("2task", "2thForExamination", TaskStatus.IN_PROGRESS,
             InMemoryTaskManager.getNewId(), Duration.ofSeconds(1), LocalDateTime.now().minusSeconds(2000));
-    private final static Task task3 = new Task("3task", "3thForExamination", TaskStatus.DONE,
+    private final Task task3 = new Task("3task", "3thForExamination", TaskStatus.DONE,
             InMemoryTaskManager.getNewId(), Duration.ofSeconds(1), LocalDateTime.now().minusSeconds(3000));
 
-    private final static EpicTask eTask1 = new EpicTask("1task", "1thForExamination", TaskStatus.NEW,
+    private final EpicTask eTask1 = new EpicTask("1task", "1thForExamination", TaskStatus.NEW,
             InMemoryTaskManager.getNewId(), Duration.ofSeconds(1), LocalDateTime.now().minusSeconds(4000));
-    private final static EpicTask eTask2 = new EpicTask("2task", "2thForExamination", TaskStatus.IN_PROGRESS,
+    private final EpicTask eTask2 = new EpicTask("2task", "2thForExamination", TaskStatus.IN_PROGRESS,
             InMemoryTaskManager.getNewId(), Duration.ofSeconds(1), LocalDateTime.now().minusSeconds(5000));
-    private final static EpicTask eTask3 = new EpicTask("3task", "3thForExamination", TaskStatus.DONE,
+    private final EpicTask eTask3 = new EpicTask("3task", "3thForExamination", TaskStatus.DONE,
             InMemoryTaskManager.getNewId(), Duration.ofSeconds(1), LocalDateTime.now().minusSeconds(6000));
 
-    private final static Subtask sTask1 = new Subtask("1task", "1thForExamination", TaskStatus.NEW,
+    private final Subtask sTask1 = new Subtask("1task", "1thForExamination", TaskStatus.NEW,
             InMemoryTaskManager.getNewId(), Duration.ofSeconds(1), LocalDateTime.now().minusSeconds(7000));
-    private final static Subtask sTask2 = new Subtask("2task", "2thForExamination", TaskStatus.DONE,
+    private final Subtask sTask2 = new Subtask("2task", "2thForExamination", TaskStatus.DONE,
             InMemoryTaskManager.getNewId(), Duration.ofSeconds(1), LocalDateTime.now().minusSeconds(8000));
-    private final static Subtask sTask3 = new Subtask("3task", "3thForExamination", TaskStatus.DONE,
+    private final Subtask sTask3 = new Subtask("3task", "3thForExamination", TaskStatus.DONE,
             InMemoryTaskManager.getNewId(), Duration.ofSeconds(1), LocalDateTime.now().minusSeconds(9000));
 
-    private final static Subtask sTask4 = new Subtask("4task", "4thForExamination", TaskStatus.NEW,
+    private final Subtask sTask4 = new Subtask("4task", "4thForExamination", TaskStatus.NEW,
             InMemoryTaskManager.getNewId(), Duration.ofSeconds(1), LocalDateTime.now().minusSeconds(10000));
-    private final static Subtask sTask5 = new Subtask("5task", "5thForExamination", TaskStatus.DONE,
+    private final Subtask sTask5 = new Subtask("5task", "5thForExamination", TaskStatus.DONE,
             InMemoryTaskManager.getNewId(), Duration.ofSeconds(1), LocalDateTime.now().minusSeconds(11000));
-    private final static Subtask sTask6 = new Subtask("6task", "6thForExamination", TaskStatus.DONE,
+    private final Subtask sTask6 = new Subtask("6task", "6thForExamination", TaskStatus.DONE,
             InMemoryTaskManager.getNewId(), Duration.ofSeconds(1), LocalDateTime.now().minusSeconds(12000));
 
     public T manager;
@@ -331,6 +331,7 @@ public abstract class TaskManagerTest<T extends TaskManager> {
 
         Assertions.assertEquals(epicTaskForTest.getStatus(), TaskStatus.IN_PROGRESS);
     }
+
     @Test
     public void shouldCorrectSetEpicStatusWithNewAndDoneSubStatus() {
         Subtask testTask1 = new Subtask("tt1", "tt1", TaskStatus.NEW,
