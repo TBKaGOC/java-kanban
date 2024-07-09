@@ -6,29 +6,17 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import java.time.Duration;
+import java.time.LocalDateTime;
 import java.util.*;
 
 public class InMemoryHistoryManagerTest {
-    private static Task task1 = new Task("1task", "1thForExamination",
-            TaskStatus.NEW, InMemoryTaskManager.getNewId());
-    private static Task task2 = new Task("2task", "2thForExamination",
-            TaskStatus.IN_PROGRESS, InMemoryTaskManager.getNewId());
-    private static Task task3 = new Task("3task", "3thForExamination",
-            TaskStatus.DONE, InMemoryTaskManager.getNewId());
-
-    private static EpicTask eTask1 = new EpicTask("1task", "1thForExamination",
-            TaskStatus.NEW, InMemoryTaskManager.getNewId());
-    private static EpicTask eTask2 = new EpicTask("2task", "2thForExamination",
-            TaskStatus.IN_PROGRESS, InMemoryTaskManager.getNewId());
-    private static EpicTask eTask3 = new EpicTask("3task", "3thForExamination",
-            TaskStatus.DONE, InMemoryTaskManager.getNewId());
-
-    private static Subtask sTask1 = new Subtask("1task", "1thForExamination",
-            TaskStatus.NEW, InMemoryTaskManager.getNewId());
-    private static Subtask sTask2 = new Subtask("2task", "2thForExamination",
-            TaskStatus.DONE, InMemoryTaskManager.getNewId());
-    private static Subtask sTask3 = new Subtask("3task", "3thForExamination",
-            TaskStatus.DONE, InMemoryTaskManager.getNewId());
+    private final static Task task1 = new Task("1task", "1thForExamination", TaskStatus.NEW,
+            InMemoryTaskManager.getNewId(), Duration.ofSeconds(1), LocalDateTime.now().minusSeconds(1000));
+    private final static Task task2 = new Task("2task", "2thForExamination", TaskStatus.IN_PROGRESS,
+            InMemoryTaskManager.getNewId(), Duration.ofSeconds(1), LocalDateTime.now().minusSeconds(2000));
+    private final static Task task3 = new Task("3task", "3thForExamination", TaskStatus.DONE,
+            InMemoryTaskManager.getNewId(), Duration.ofSeconds(1), LocalDateTime.now().minusSeconds(3000));
 
     private static TaskManager manager = Managers.getDefault();
 
@@ -42,26 +30,24 @@ public class InMemoryHistoryManagerTest {
         manager.addTask(task1);
         manager.addTask(task2);
         manager.addTask(task3);
+    }
+    @Test
+    public void shouldGetHistoryOfLastElements() {
+        List<Task> history = new ArrayList<>();
+        history.add(task2);
+        history.add(task3);
+        history.add(task1);
 
-        manager.addEpicTask(eTask1);
-        manager.addEpicTask(eTask2);
-        manager.addEpicTask(eTask3);
 
-        manager.addSubtask(sTask1, eTask1.getId());
-        manager.addSubtask(sTask2, eTask1.getId());
-        manager.addSubtask(sTask3, eTask1.getId());
+        manager.getTask(task2.getId());
+        manager.getTask(task3.getId());
+        manager.getTask(task1.getId());
 
-        manager.addSubtask(sTask1, eTask2.getId());
-        manager.addSubtask(sTask2, eTask2.getId());
-        manager.addSubtask(sTask3, eTask2.getId());
-
-        manager.addSubtask(sTask1, eTask3.getId());
-        manager.addSubtask(sTask2, eTask3.getId());
-        manager.addSubtask(sTask3, eTask3.getId());
+        Assertions.assertEquals(Managers.getDefaultHistory().getHistory(), history);
     }
 
     @Test
-    public void shouldGetHistoryOfLastElements() {
+    public void shouldGetHistoryOfLastElementsWithRepeatingElement() {
         List<Task> history = new ArrayList<>();
         history.add(task2);
         history.add(task3);
@@ -72,6 +58,61 @@ public class InMemoryHistoryManagerTest {
         manager.getTask(task1.getId());
         manager.getTask(task3.getId());
         manager.getTask(task1.getId());
+
+        Assertions.assertEquals(Managers.getDefaultHistory().getHistory(), history);
+    }
+
+    @Test
+    public void shouldGetEmptyHistory() {
+        List<Task> history = new ArrayList<>();
+
+        Assertions.assertEquals(Managers.getDefaultHistory().getHistory(), history);
+    }
+
+    @Test
+    public void shouldGetHistoryOfLastElementsIfDeleteElementInCentre() {
+        List<Task> history = new ArrayList<>();
+        history.add(task2);
+        history.add(task1);
+
+
+        manager.getTask(task2.getId());
+        manager.getTask(task3.getId());
+        manager.getTask(task1.getId());
+
+        Managers.getDefaultHistory().remove(task3.getId());
+
+        Assertions.assertEquals(Managers.getDefaultHistory().getHistory(), history);
+    }
+
+    @Test
+    public void shouldGetHistoryOfLastElementsIfDeleteElementInHead() {
+        List<Task> history = new ArrayList<>();
+        history.add(task3);
+        history.add(task1);
+
+
+        manager.getTask(task2.getId());
+        manager.getTask(task3.getId());
+        manager.getTask(task1.getId());
+
+        Managers.getDefaultHistory().remove(task2.getId());
+
+        Assertions.assertEquals(Managers.getDefaultHistory().getHistory(), history);
+    }
+
+    @Test
+    public void shouldGetHistoryOfLastElementsIfDeleteElementInTail() {
+        List<Task> history = new ArrayList<>();
+        history.add(task2);
+        history.add(task3);
+
+
+        manager.getTask(task2.getId());
+        manager.getTask(task3.getId());
+        manager.getTask(task1.getId());
+
+        Managers.getDefaultHistory().remove(task1.getId());
 
         Assertions.assertEquals(Managers.getDefaultHistory().getHistory(), history);
     }
