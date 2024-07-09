@@ -47,24 +47,24 @@ public class FileBackedTaskManagerTest extends TaskManagerTest<FileBackedTaskMan
     }
 
     @Test
-    public void shouldThrowManagerSaveExceptionIfSetIncorrectFile(){
+    public void shouldThrowManagerSaveExceptionIfSetIncorrectFile() {
         manager.setFileToSave(new File("E:\\incorrectFile.txt"));
 
         Assertions.assertThrows(ManagerSaveException.class, () -> manager.save());
     }
 
     @Test
-    public void shouldNotThrowManagerSaveExceptionIfSetCorrectFile(){
+    public void shouldNotThrowManagerSaveExceptionIfSetCorrectFile() {
         Assertions.assertDoesNotThrow(() -> manager.save());
     }
 
     @Test
-    public void shouldThrowManagerLoadExceptionIfSetIncorrectFile(){
+    public void shouldThrowManagerLoadExceptionIfSetIncorrectFile() {
         Assertions.assertThrows(ManagerLoadException.class, () -> FileBackedTaskManager.loadFromFile(new File("E:\\incorrectFile.txt")));
     }
 
     @Test
-    public void shouldNotThrowManagerLoadExceptionIfSetCorrectFile(){
+    public void shouldNotThrowManagerLoadExceptionIfSetCorrectFile() {
         Assertions.assertDoesNotThrow(() -> {
             FileBackedTaskManager.loadFromFile(manager.getFileToSave());
         });
