@@ -59,10 +59,12 @@ public class FileBackedTaskManagerTest extends TaskManagerTest<FileBackedTaskMan
     }
 
     @Test
-    public void shouldThrowManagerLoadExceptionIfSetIncorrectFile() {
-        Assertions.assertThrows(ManagerLoadException.class,
-                () -> FileBackedTaskManager.loadFromFile(
-                        new File("INCORRECT_DIRECTORY:\\incorrectFile.incorrectExtension")));
+    public void shouldThrowManagerLoadExceptionIfSetEmptyFile() throws IOException {
+        File emptyFile = File.createTempFile("empty", ".txt");
+
+
+            Assertions.assertThrows(ManagerLoadException.class,
+                    () -> FileBackedTaskManager.loadFromFile(emptyFile));
     }
 
     @Test

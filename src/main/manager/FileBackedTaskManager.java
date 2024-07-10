@@ -91,6 +91,10 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
             throw new ManagerLoadException(e);
         }
 
+        if (resultForLoad.getTasks().isEmpty() && resultForLoad.getEpicTasks().isEmpty()) {
+            throw new ManagerLoadException();
+        }
+
         resultForLoad.setFileToSave(file);
 
         return resultForLoad;
