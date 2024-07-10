@@ -48,7 +48,7 @@ public class FileBackedTaskManagerTest extends TaskManagerTest<FileBackedTaskMan
 
     @Test
     public void shouldThrowManagerSaveExceptionIfSetIncorrectFile() {
-        manager.setFileToSave(new File("INCORRECT_DIRECTORY:\\incorrectFile.incorrectExtension"));
+        manager.setFileToSave(new File(""));
 
         Assertions.assertThrows(ManagerSaveException.class, () -> manager.save());
     }
