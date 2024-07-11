@@ -1,6 +1,5 @@
 package test;
 
-import main.exception.IntersectionOfTasksException;
 import main.manager.FileBackedTaskManager;
 import main.manager.InMemoryTaskManager;
 import main.manager.Managers;
