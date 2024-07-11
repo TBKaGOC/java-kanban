@@ -1,6 +1,6 @@
 package main.exception;
 
-public class IntersectionOfTasksException  extends RuntimeException {
+public class IntersectionOfTasksException extends Exception {
     public IntersectionOfTasksException() {
         super();
     }

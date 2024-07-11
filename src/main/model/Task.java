@@ -116,4 +116,8 @@ public class Task {
     public static LocalDateTime getNullLocalDateTime() {
         return nullLocalDateTime;
     }
+
+    public TaskType getType() {
+        return TaskType.TASK;
+    }
 }

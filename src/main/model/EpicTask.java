@@ -26,27 +26,23 @@ public class EpicTask extends Task {
 
     public void setStartAndEndTime() {
         if (!subtasks.isEmpty()) {
-            Optional<Subtask> startTime = subtasks.values()
+            LocalDateTime startTime = subtasks.values()
                     .stream()
-                    .filter(e -> e.getStartTime() != null)
-                    .min(Comparator.comparing(Task::getStartTime));
+                    .map(Task::getStartTime)
+                    .filter(Objects::nonNull)
+                    .min(Comparator.naturalOrder())
+                    .orElse(nullLocalDateTime);
 
-            if (startTime.isPresent()) {
-                setStartTime(startTime.get().getStartTime());
-            } else {
-                setStartTime(nullLocalDateTime);
-            }
+            setStartTime(startTime);
 
-            Optional<Subtask> endTime = subtasks.values()
+            LocalDateTime endTime = subtasks.values()
                     .stream()
-                    .filter(e -> e.getEndTime() != null)
-                    .max(Comparator.comparing(Task::getEndTime));
+                    .map(Task::getStartTime)
+                    .filter(Objects::nonNull)
+                    .max(Comparator.naturalOrder())
+                    .orElse(nullLocalDateTime);
 
-            if (endTime.isPresent()) {
-                setEndTime(endTime.get().getEndTime());
-            } else {
-                setEndTime(nullLocalDateTime);
-            }
+            setEndTime(endTime);
         } else {
             setStartTime(nullLocalDateTime);
             setEndTime(nullLocalDateTime);
@@ -67,11 +63,19 @@ public class EpicTask extends Task {
         setDurationForEpic();
         if (!subtask.getStartTime().equals(Subtask.getNullLocalDateTime())) {
             sortedSubtask.remove(subtask);
-            sortedSubtask.forEach(el -> {
-                if (InMemoryTaskManager.isTaskIntersect(subtask, el)) {
-                    throw new IntersectionOfTasksException();
+
+            try {
+                for (Subtask t: sortedSubtask) {
+                    if (InMemoryTaskManager.isTaskIntersect(subtask, t)) {
+                        throw new IntersectionOfTasksException();
+                    }
                 }
-            });
+            } catch (IntersectionOfTasksException e) {
+                subtasks.remove(id);
+                System.out.println("Пересечения времени выаолнения тасков не должно быть");
+                return;
+            }
+
             sortedSubtask.add(subtask);
         }
     }
@@ -144,5 +148,10 @@ public class EpicTask extends Task {
                 ", startTime=" + getStartTime().format(pattern) +
                 ", subtasks=" + subtasks +
                 '}';
+    }
+
+    @Override
+    public TaskType getType() {
+        return TaskType.EPIC_TASK;
     }
 }

@@ -18,18 +18,13 @@ import java.time.LocalDateTime;
 public class FileBackedTaskManagerTest extends TaskManagerTest<FileBackedTaskManager> {
 
     @BeforeEach
-    public void addAll() {
+    public void addAll() throws IOException{
             manager = new FileBackedTaskManager(Managers.getDefaultHistory(), null);
         if (manager.getFileToSave() != null) {
             manager.getFileToSave().delete();
         }
 
-        File file = null;
-        try {
-            file = File.createTempFile("save", ".txt");
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
+        File file = File.createTempFile("save", ".txt");
 
         manager.setFileToSave(file);
 

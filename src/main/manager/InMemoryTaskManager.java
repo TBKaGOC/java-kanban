@@ -61,7 +61,7 @@ public class InMemoryTaskManager implements TaskManager {
         }
 
         Set<Task> newSet = sortedTasks.stream()
-                .filter(e -> !e.getClass().equals(Task.class))
+                .filter(e -> e.getType() != TaskType.TASK)
                 .collect(Collectors.toSet());
 
         sortedTasks = new TreeSet<>(Comparator.comparing(Task::getStartTime));
@@ -71,7 +71,7 @@ public class InMemoryTaskManager implements TaskManager {
     @Override
     public void deleteAllEpicTasks() {
         Set<Task> newSet = sortedTasks.stream()
-                .filter(e -> !e.getClass().equals(EpicTask.class))
+                .filter(e -> e.getType() != TaskType.EPIC_TASK)
                 .collect(Collectors.toSet());
 
         sortedTasks = new TreeSet<>(Comparator.comparing(Task::getStartTime));
@@ -96,7 +96,7 @@ public class InMemoryTaskManager implements TaskManager {
             epicTasks.values().forEach(EpicTask::deleteAllSubtask);
 
             Set<Task> newSet = sortedTasks.stream()
-                    .filter(e -> !e.getClass().equals(EpicTask.class))
+                    .filter(e -> e.getType() != TaskType.EPIC_TASK)
                     .collect(Collectors.toSet());
 
             sortedTasks = new TreeSet<>(Comparator.comparing(Task::getStartTime));
@@ -131,11 +131,16 @@ public class InMemoryTaskManager implements TaskManager {
         tasks.put(id, task);
 
         if (!task.getStartTime().equals(Task.getNullLocalDateTime())) {
-            sortedTasks.forEach(el -> {
-                if (isTaskIntersect(task, el)) {
-                    throw new IntersectionOfTasksException();
+            try {
+                for (Task t : sortedTasks) {
+                    if (isTaskIntersect(task, t)) {
+                        throw new IntersectionOfTasksException();
+                    }
                 }
-            });
+            } catch (IntersectionOfTasksException e) {
+                System.out.println("Пересечения времени выаолнения тасков не должно быть");
+                return;
+            }
             sortedTasks.add(task);
 
         }
@@ -149,7 +154,7 @@ public class InMemoryTaskManager implements TaskManager {
     }
 
     @Override
-    public void addSubtask(Subtask sub, int epicTaskId) {
+    public void addSubtask(Subtask sub, int epicTaskId){
         int subId = sub.getId();
         if (epicTasks.containsKey(epicTaskId)) {
             EpicTask task = epicTasks.get(epicTaskId);
@@ -157,13 +162,21 @@ public class InMemoryTaskManager implements TaskManager {
 
             if (!task.getStartTime().equals(EpicTask.getNullLocalDateTime())) {
                 sortedTasks.remove(task);
-                sortedTasks.forEach(el -> {
-                    if (isTaskIntersect(task, el)) {
-                        throw new IntersectionOfTasksException();
+
+                try {
+                    for (Task t : sortedTasks) {
+                        if (isTaskIntersect(task, t)) {
+                            throw new IntersectionOfTasksException();
+                        }
                     }
-                });
+                } catch (IntersectionOfTasksException e) {
+                    task.deleteSubtask(subId);
+                    System.out.println("Пересечения времени выаолнения тасков не должно быть");
+                    return;
+                }
                 sortedTasks.add(task);
             }
+
 
             setEpicTaskStatus(task);
             subtasks.put(subId, sub);
@@ -209,7 +222,7 @@ public class InMemoryTaskManager implements TaskManager {
             });
 
             Set<Task> newSet = sortedTasks.stream()
-                    .filter(e -> !e.getClass().equals(EpicTask.class))
+                    .filter(e -> e.getType() != TaskType.EPIC_TASK)
                     .collect(Collectors.toSet());
 
             sortedTasks = new TreeSet<>(Comparator.comparing(Task::getStartTime));
@@ -255,7 +268,7 @@ public class InMemoryTaskManager implements TaskManager {
         if (!subtasksOfEpic.isEmpty()) {
             TaskStatus firstStatus = subtasksOfEpic.getFirst().getStatus();
 
-            Optional<TaskStatus> resultStatus = subtasksOfEpic.stream()
+            TaskStatus resultStatus = subtasksOfEpic.stream()
                             .map(Task::getStatus)
                             .map(status -> {
                                 if (status == firstStatus) {
@@ -265,14 +278,11 @@ public class InMemoryTaskManager implements TaskManager {
                                 }
                             })
                             .filter(e -> e == TaskStatus.IN_PROGRESS)
-                            .findFirst();
+                            .findFirst()
+                            .orElse(firstStatus);
 
 
-            if (resultStatus.isPresent()) {
-                task.setStatus(resultStatus.get());
-            } else {
-                task.setStatus(firstStatus);
-            }
+            task.setStatus(resultStatus);
         }
     }
 
