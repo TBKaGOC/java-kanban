@@ -57,24 +57,19 @@ public class EpicTask extends Task {
         }
     }
 
-    public void addSubtask(int id, Subtask subtask) {
+    public void addSubtask(int id, Subtask subtask) throws IntersectionOfTasksException {
         subtasks.put(id, subtask);
         setStartAndEndTime();
         setDurationForEpic();
         if (!subtask.getStartTime().equals(Subtask.getNullLocalDateTime())) {
             sortedSubtask.remove(subtask);
-
-            try {
-                for (Subtask t: sortedSubtask) {
-                    if (InMemoryTaskManager.isTaskIntersect(subtask, t)) {
-                        throw new IntersectionOfTasksException();
-                    }
+            for (Subtask t: sortedSubtask) {
+                if (InMemoryTaskManager.isTaskIntersect(subtask, t)) {
+                    throw new IntersectionOfTasksException();
                 }
-            } catch (IntersectionOfTasksException e) {
-                subtasks.remove(id);
-                System.out.println("Пересечения времени выаолнения тасков не должно быть");
-                return;
             }
+
+            
 
             sortedSubtask.add(subtask);
         }

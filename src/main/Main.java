@@ -1,5 +1,6 @@
 package main;
 
+import main.exception.IntersectionOfTasksException;
 import main.manager.InMemoryTaskManager;
 import main.manager.Managers;
 import main.manager.TaskManager;
@@ -9,7 +10,7 @@ import java.time.Duration;
 import java.time.LocalDateTime;
 
 public class Main {
-    public static void main(String[] args) {
+    public static void main(String[] args) throws IntersectionOfTasksException {
         TaskManager manager = Managers.getDefault();
 
         Task t1 = new Task("t1", "newT1", TaskStatus.NEW, InMemoryTaskManager.getNewId(), Duration.ofSeconds(234322), LocalDateTime.now());

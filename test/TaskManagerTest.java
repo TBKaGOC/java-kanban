@@ -1,5 +1,6 @@
 package test;
 
+import main.exception.IntersectionOfTasksException;
 import main.manager.FileBackedTaskManager;
 import main.manager.InMemoryTaskManager;
 import main.manager.Managers;
@@ -52,7 +53,7 @@ public abstract class TaskManagerTest<T extends TaskManager> {
     public T manager;
 
     @BeforeEach
-    public void addAll() throws IOException {
+    public void addAll() throws Exception {
         manager.deleteAllTasks();
         manager.deleteAllEpicTasks();
         manager.deleteAllSubtasks();
@@ -208,7 +209,7 @@ public abstract class TaskManagerTest<T extends TaskManager> {
     }
 
     @Test
-    public void shouldAddSubtaskWithoutEpicInTaskManager() {
+    public void shouldAddSubtaskWithoutEpicInTaskManager() throws IntersectionOfTasksException {
         Subtask testSub = new Subtask("ts", "ts", TaskStatus.NEW, InMemoryTaskManager.getNewId(),
                 Duration.ofSeconds(1), LocalDateTime.now());
         manager.addSubtask(testSub, InMemoryTaskManager.getNewId());
@@ -217,7 +218,69 @@ public abstract class TaskManagerTest<T extends TaskManager> {
     }
 
     @Test
-    public void shouldCorrectSetEpicStatusWithTwoNewSubStatus() {
+    public void shouldThrowIntersectionOfTasksExceptionIfAddIntersectionsTask() {
+        Task testTask1 = new Task("tt1", "tt1", TaskStatus.NEW,
+                FileBackedTaskManager.getNewId(), Duration.ofSeconds(1), LocalDateTime.now().plusSeconds(10000));
+        Task testTask2 = new Task("tt2", "tt2", TaskStatus.NEW,
+                FileBackedTaskManager.getNewId(), Duration.ofSeconds(10000), LocalDateTime.now().plusSeconds(5000));
+
+        Assertions.assertThrows(IntersectionOfTasksException.class, () -> {
+            manager.addTask(testTask1);
+            manager.addTask(testTask2);
+        }, "Добавление двух пересекающихся отрезков времени должно приводить к исключению.");
+    }
+
+    @Test
+    public void shouldThrowIntersectionOfTasksExceptionIfAddIntersectionsSubtask() {
+        Subtask testTask1 = new Subtask("tt1", "tt1", TaskStatus.NEW,
+                FileBackedTaskManager.getNewId(), Duration.ofSeconds(1), LocalDateTime.now().plusSeconds(10000));
+        Subtask testTask2 = new Subtask("tt2", "tt2", TaskStatus.NEW,
+                FileBackedTaskManager.getNewId(), Duration.ofSeconds(10000), LocalDateTime.now().plusSeconds(5000));
+
+        EpicTask epicTaskForTest = new EpicTask("e", "e", TaskStatus.NEW,
+                FileBackedTaskManager.getNewId(), Duration.ofSeconds(10000), LocalDateTime.now().plusSeconds(5000));
+
+        manager.addEpicTask(epicTaskForTest);
+
+        Assertions.assertThrows(IntersectionOfTasksException.class, () -> {
+            manager.addSubtask(testTask1, epicTaskForTest.getId());
+            manager.addSubtask(testTask2, epicTaskForTest.getId());
+        }, "Добавление двух пересекающихся отрезков времени должно приводить к исключению.");
+    }
+
+    @Test
+    public void shouldNotThrowIntersectionOfTasksExceptionIfAddNotIntersectionsTask() {
+        Task testTask1 = new Task("tt1", "tt1", TaskStatus.NEW,
+                FileBackedTaskManager.getNewId(), Duration.ofSeconds(1), LocalDateTime.now().plusSeconds(10000));
+        Task testTask2 = new Task("tt2", "tt2", TaskStatus.NEW,
+                FileBackedTaskManager.getNewId(), Duration.ofSeconds(1), LocalDateTime.now().plusSeconds(15000));
+
+        Assertions.assertDoesNotThrow(() -> {
+            manager.addTask(testTask1);
+            manager.addTask(testTask2);
+        });
+    }
+
+    @Test
+    public void shouldNotThrowIntersectionOfTasksExceptionIfAddNotIntersectionsSubtask() {
+        Subtask testTask1 = new Subtask("tt1", "tt1", TaskStatus.NEW,
+                FileBackedTaskManager.getNewId(), Duration.ofSeconds(1), LocalDateTime.now().plusSeconds(10000));
+        Subtask testTask2 = new Subtask("tt2", "tt2", TaskStatus.NEW,
+                FileBackedTaskManager.getNewId(), Duration.ofSeconds(1), LocalDateTime.now().plusSeconds(15000));
+
+        EpicTask epicTaskForTest = new EpicTask("e", "e", TaskStatus.NEW,
+                FileBackedTaskManager.getNewId(), Duration.ofSeconds(10000), LocalDateTime.now().plusSeconds(5000));
+
+        manager.addEpicTask(epicTaskForTest);
+
+        Assertions.assertDoesNotThrow(() -> {
+            manager.addSubtask(testTask1, epicTaskForTest.getId());
+            manager.addSubtask(testTask2, epicTaskForTest.getId());
+        });
+    }
+
+    @Test
+    public void shouldCorrectSetEpicStatusWithTwoNewSubStatus() throws IntersectionOfTasksException {
         Subtask testTask1 = new Subtask("tt1", "tt1", TaskStatus.NEW,
                 FileBackedTaskManager.getNewId(), Duration.ofSeconds(1), LocalDateTime.now().plusSeconds(10000));
         Subtask testTask2 = new Subtask("tt2", "tt2", TaskStatus.NEW,
@@ -235,7 +298,7 @@ public abstract class TaskManagerTest<T extends TaskManager> {
     }
 
     @Test
-    public void shouldCorrectSetEpicStatusWithTwoDoneSubStatus() {
+    public void shouldCorrectSetEpicStatusWithTwoDoneSubStatus() throws IntersectionOfTasksException {
         Subtask testTask1 = new Subtask("tt1", "tt1", TaskStatus.DONE,
                 FileBackedTaskManager.getNewId(), Duration.ofSeconds(1), LocalDateTime.now().plusSeconds(10000));
         Subtask testTask2 = new Subtask("tt2", "tt2", TaskStatus.DONE,
@@ -253,7 +316,7 @@ public abstract class TaskManagerTest<T extends TaskManager> {
     }
 
     @Test
-    public void shouldCorrectSetEpicStatusWithTwoInProgressSubStatus() {
+    public void shouldCorrectSetEpicStatusWithTwoInProgressSubStatus() throws IntersectionOfTasksException {
         Subtask testTask1 = new Subtask("tt1", "tt1", TaskStatus.IN_PROGRESS,
                 FileBackedTaskManager.getNewId(), Duration.ofSeconds(1), LocalDateTime.now().plusSeconds(10000));
         Subtask testTask2 = new Subtask("tt2", "tt2", TaskStatus.IN_PROGRESS,
@@ -271,7 +334,7 @@ public abstract class TaskManagerTest<T extends TaskManager> {
     }
 
     @Test
-    public void shouldCorrectSetEpicStatusWithNewAndDoneSubStatus() {
+    public void shouldCorrectSetEpicStatusWithNewAndDoneSubStatus() throws IntersectionOfTasksException {
         Subtask testTask1 = new Subtask("tt1", "tt1", TaskStatus.NEW,
                 FileBackedTaskManager.getNewId(), Duration.ofSeconds(1), LocalDateTime.now().plusSeconds(10000));
         Subtask testTask2 = new Subtask("tt2", "tt2", TaskStatus.DONE,

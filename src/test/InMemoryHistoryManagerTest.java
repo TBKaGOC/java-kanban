@@ -1,5 +1,6 @@
 package test;
 
+import main.exception.IntersectionOfTasksException;
 import main.manager.*;
 import main.model.*;
 import org.junit.jupiter.api.Assertions;
@@ -21,7 +22,7 @@ public class InMemoryHistoryManagerTest {
     private final TaskManager manager = Managers.getDefault();
 
     @BeforeEach
-    public void addAll() {
+    public void addAll() throws IntersectionOfTasksException {
         manager.deleteAllTasks();
         manager.deleteAllEpicTasks();
         manager.deleteAllSubtasks();

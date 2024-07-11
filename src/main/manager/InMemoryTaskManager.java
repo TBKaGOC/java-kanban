@@ -126,21 +126,17 @@ public class InMemoryTaskManager implements TaskManager {
 
     @Override
     //Создание задач
-    public void addTask(Task task) {
+    public void addTask(Task task) throws IntersectionOfTasksException {
         int id = task.getId();
         tasks.put(id, task);
 
         if (!task.getStartTime().equals(Task.getNullLocalDateTime())) {
-            try {
-                for (Task t : sortedTasks) {
-                    if (isTaskIntersect(task, t)) {
-                        throw new IntersectionOfTasksException();
-                    }
+            for (Task t : sortedTasks) {
+                if (isTaskIntersect(task, t)) {
+                    throw new IntersectionOfTasksException();
                 }
-            } catch (IntersectionOfTasksException e) {
-                System.out.println("Пересечения времени выаолнения тасков не должно быть");
-                return;
             }
+
             sortedTasks.add(task);
 
         }
@@ -154,7 +150,7 @@ public class InMemoryTaskManager implements TaskManager {
     }
 
     @Override
-    public void addSubtask(Subtask sub, int epicTaskId) {
+    public void addSubtask(Subtask sub, int epicTaskId) throws IntersectionOfTasksException {
         int subId = sub.getId();
         if (epicTasks.containsKey(epicTaskId)) {
             EpicTask task = epicTasks.get(epicTaskId);
@@ -163,17 +159,12 @@ public class InMemoryTaskManager implements TaskManager {
             if (!task.getStartTime().equals(EpicTask.getNullLocalDateTime())) {
                 sortedTasks.remove(task);
 
-                try {
-                    for (Task t : sortedTasks) {
-                        if (isTaskIntersect(task, t)) {
-                            throw new IntersectionOfTasksException();
-                        }
+                for (Task t : sortedTasks) {
+                    if (isTaskIntersect(task, t)) {
+                        throw new IntersectionOfTasksException();
                     }
-                } catch (IntersectionOfTasksException e) {
-                    task.deleteSubtask(subId);
-                    System.out.println("Пересечения времени выаолнения тасков не должно быть");
-                    return;
                 }
+
                 sortedTasks.add(task);
             }
 

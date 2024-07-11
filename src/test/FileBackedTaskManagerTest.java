@@ -1,5 +1,6 @@
 package test;
 
+import main.exception.IntersectionOfTasksException;
 import main.exception.ManagerSaveException;
 import main.exception.ManagerLoadException;
 import main.manager.FileBackedTaskManager;
@@ -18,7 +19,7 @@ import java.time.LocalDateTime;
 public class FileBackedTaskManagerTest extends TaskManagerTest<FileBackedTaskManager> {
 
     @BeforeEach
-    public void addAll() throws IOException {
+    public void addAll() throws Exception {
             manager = new FileBackedTaskManager(Managers.getDefaultHistory(), null);
         if (manager.getFileToSave() != null) {
             manager.getFileToSave().delete();
@@ -32,7 +33,7 @@ public class FileBackedTaskManagerTest extends TaskManagerTest<FileBackedTaskMan
     }
 
     @Test
-    public void shouldSaveAndLoadEqualsObject() {
+    public void shouldSaveAndLoadEqualsObject() throws IntersectionOfTasksException {
         Task testTask = new Task("tt", "tt", TaskStatus.NEW,
                 FileBackedTaskManager.getNewId(), Duration.ofSeconds(1), LocalDateTime.now().plusSeconds(10000));
         manager.addTask(testTask);

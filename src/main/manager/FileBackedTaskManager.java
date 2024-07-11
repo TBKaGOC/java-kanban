@@ -1,5 +1,6 @@
 package main.manager;
 
+import main.exception.IntersectionOfTasksException;
 import main.exception.ManagerSaveException;
 import main.exception.ManagerLoadException;
 import main.model.*;
@@ -49,7 +50,7 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
         }
     }
 
-    public static TaskManager loadFromFile(File file) {
+    public static TaskManager loadFromFile(File file) throws IntersectionOfTasksException {
         FileBackedTaskManager resultForLoad = new FileBackedTaskManager(Managers.getDefaultHistory(), null);
 
         try (BufferedReader reader = new BufferedReader(new FileReader(file))) {
@@ -70,12 +71,11 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
 
                         resultForLoad.addEpicTask(epicTask);
                         if (elements.length == 2) {
-                            List<String> subtasks = List.of(elements[1].split(";"));
-                            subtasks.forEach(subtask -> {
-                                Subtask sub = getSubtaskFromString(subtask);
+                            for (String s: List.of(elements[1].split(";"))) {
+                                Subtask sub = getSubtaskFromString(s);
                                 getNewId();
                                 resultForLoad.addSubtask(sub, idOfEpic);
-                            });
+                            }
                         }
                     } else {
                         String[] elements = task.split(",");
@@ -128,7 +128,7 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
     }
 
     @Override
-    public void addTask(Task task) {
+    public void addTask(Task task) throws IntersectionOfTasksException {
         super.addTask(task);
         save();
     }
@@ -140,7 +140,7 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
     }
 
     @Override
-    public void addSubtask(Subtask sub, int epicTaskId) {
+    public void addSubtask(Subtask sub, int epicTaskId) throws IntersectionOfTasksException {
         super.addSubtask(sub, epicTaskId);
         save();
     }

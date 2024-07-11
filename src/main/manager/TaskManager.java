@@ -1,5 +1,6 @@
 package main.manager;
 
+import main.exception.IntersectionOfTasksException;
 import main.model.*;
 
 import java.util.Map;
@@ -33,11 +34,11 @@ public interface TaskManager {
     Optional<Subtask> getSubtask(int id);
 
     //Создание задач
-    void addTask(Task task);
+    void addTask(Task task) throws IntersectionOfTasksException;
 
     void addEpicTask(EpicTask epic);
 
-    void addSubtask(Subtask sub, int epicTaskId);
+    void addSubtask(Subtask sub, int epicTaskId) throws IntersectionOfTasksException;
 
     //Обновление задачи
     void updatingTask(Task task);
