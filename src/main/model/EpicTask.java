@@ -69,8 +69,6 @@ public class EpicTask extends Task {
                 }
             }
 
-            
-
             sortedSubtask.add(subtask);
         }
     }
