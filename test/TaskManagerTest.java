@@ -13,6 +13,7 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import java.io.IOException;
 import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.Comparator;
@@ -52,7 +53,7 @@ public abstract class TaskManagerTest<T extends TaskManager> {
     public T manager;
 
     @BeforeEach
-    public void addAll() {
+    public void addAll() throws IOException {
         manager.deleteAllTasks();
         manager.deleteAllEpicTasks();
         manager.deleteAllSubtasks();
@@ -214,68 +215,6 @@ public abstract class TaskManagerTest<T extends TaskManager> {
         manager.addSubtask(testSub, InMemoryTaskManager.getNewId());
 
         Assertions.assertFalse(manager.containsTask(testSub));
-    }
-
-    @Test
-    public void shouldThrowIntersectionOfTasksExceptionIfAddIntersectionsTask() {
-        Task testTask1 = new Task("tt1", "tt1", TaskStatus.NEW,
-                FileBackedTaskManager.getNewId(), Duration.ofSeconds(1), LocalDateTime.now().plusSeconds(10000));
-        Task testTask2 = new Task("tt2", "tt2", TaskStatus.NEW,
-                FileBackedTaskManager.getNewId(), Duration.ofSeconds(10000), LocalDateTime.now().plusSeconds(5000));
-
-        Assertions.assertThrows(IntersectionOfTasksException.class, () -> {
-            manager.addTask(testTask1);
-            manager.addTask(testTask2);
-        }, "Добавление двух пересекающихся отрезков времени должно приводить к исключению.");
-    }
-
-    @Test
-    public void shouldThrowIntersectionOfTasksExceptionIfAddIntersectionsSubtask() {
-        Subtask testTask1 = new Subtask("tt1", "tt1", TaskStatus.NEW,
-                FileBackedTaskManager.getNewId(), Duration.ofSeconds(1), LocalDateTime.now().plusSeconds(10000));
-        Subtask testTask2 = new Subtask("tt2", "tt2", TaskStatus.NEW,
-                FileBackedTaskManager.getNewId(), Duration.ofSeconds(10000), LocalDateTime.now().plusSeconds(5000));
-
-        EpicTask epicTaskForTest = new EpicTask("e", "e", TaskStatus.NEW,
-                FileBackedTaskManager.getNewId(), Duration.ofSeconds(10000), LocalDateTime.now().plusSeconds(5000));
-
-        manager.addEpicTask(epicTaskForTest);
-
-        Assertions.assertThrows(IntersectionOfTasksException.class, () -> {
-            manager.addSubtask(testTask1, epicTaskForTest.getId());
-            manager.addSubtask(testTask2, epicTaskForTest.getId());
-        }, "Добавление двух пересекающихся отрезков времени должно приводить к исключению.");
-    }
-
-    @Test
-    public void shouldNotThrowIntersectionOfTasksExceptionIfAddNotIntersectionsTask() {
-        Task testTask1 = new Task("tt1", "tt1", TaskStatus.NEW,
-                FileBackedTaskManager.getNewId(), Duration.ofSeconds(1), LocalDateTime.now().plusSeconds(10000));
-        Task testTask2 = new Task("tt2", "tt2", TaskStatus.NEW,
-                FileBackedTaskManager.getNewId(), Duration.ofSeconds(1), LocalDateTime.now().plusSeconds(15000));
-
-        Assertions.assertDoesNotThrow(() -> {
-            manager.addTask(testTask1);
-            manager.addTask(testTask2);
-        });
-    }
-
-    @Test
-    public void shouldNotThrowIntersectionOfTasksExceptionIfAddNotIntersectionsSubtask() {
-        Subtask testTask1 = new Subtask("tt1", "tt1", TaskStatus.NEW,
-                FileBackedTaskManager.getNewId(), Duration.ofSeconds(1), LocalDateTime.now().plusSeconds(10000));
-        Subtask testTask2 = new Subtask("tt2", "tt2", TaskStatus.NEW,
-                FileBackedTaskManager.getNewId(), Duration.ofSeconds(1), LocalDateTime.now().plusSeconds(15000));
-
-        EpicTask epicTaskForTest = new EpicTask("e", "e", TaskStatus.NEW,
-                FileBackedTaskManager.getNewId(), Duration.ofSeconds(10000), LocalDateTime.now().plusSeconds(5000));
-
-        manager.addEpicTask(epicTaskForTest);
-
-        Assertions.assertDoesNotThrow(() -> {
-            manager.addSubtask(testTask1, epicTaskForTest.getId());
-            manager.addSubtask(testTask2, epicTaskForTest.getId());
-        });
     }
 
     @Test

@@ -18,7 +18,7 @@ import java.time.LocalDateTime;
 public class FileBackedTaskManagerTest extends TaskManagerTest<FileBackedTaskManager> {
 
     @BeforeEach
-    public void addAll() throws IOException{
+    public void addAll() throws IOException {
             manager = new FileBackedTaskManager(Managers.getDefaultHistory(), null);
         if (manager.getFileToSave() != null) {
             manager.getFileToSave().delete();
