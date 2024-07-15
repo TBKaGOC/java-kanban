@@ -1,9 +1,6 @@
 package main.utility;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 public class LinkedTaskMap<K, V> {
     private final Map<K, Node<V>> map;
@@ -28,8 +25,8 @@ public class LinkedTaskMap<K, V> {
         public boolean equals(Object o) {
             if (this == o) return true;
             if (o == null || getClass() != o.getClass()) return false;
-            Node<V> node = (Node<V>) o;
-            return value.equals(node.value);
+            Node<?> node = (Node<?>) o;
+            return Objects.equals(value, node.value);
         }
     }
 
@@ -42,13 +39,12 @@ public class LinkedTaskMap<K, V> {
 
         if (head == null) {
             head = newNode;
-            tail = newNode;
         } else {
             newNode.prev = tail;
             tail.next = newNode;
-            tail = newNode;
         }
 
+        tail = newNode;
         map.put(key, newNode);
     }
 
