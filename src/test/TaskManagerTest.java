@@ -151,7 +151,7 @@ public abstract class TaskManagerTest<T extends TaskManager> {
     }
 
     @Test
-    public void shouldGetAllSubtaskOfEpicFromMemory() {
+    public void shouldGetAllSubtaskOfEpicFromMemory() throws Exception {
         HashMap<Integer, Subtask> allSubsOfEpic = new HashMap<>();
         allSubsOfEpic.put(sTask1.getId(), sTask1);
         allSubsOfEpic.put(sTask2.getId(), sTask2);
@@ -160,7 +160,7 @@ public abstract class TaskManagerTest<T extends TaskManager> {
     }
 
     @Test
-    public void shouldUpdateTaskInMemory() {
+    public void shouldUpdateTaskInMemory() throws Exception {
         Task new1 = new Task("1taskNew", "1thForExaminationNew",
                 TaskStatus.IN_PROGRESS, task1.getId(), Duration.ofSeconds(234322), LocalDateTime.now());
         manager.updatingTask(new1);
@@ -176,7 +176,7 @@ public abstract class TaskManagerTest<T extends TaskManager> {
     }
 
     @Test
-    public void shouldUpdateSubtaskInMemory() {
+    public void shouldUpdateSubtaskInMemory() throws Exception {
         Subtask new1 = new Subtask("1taskNew", "1thForExaminationNew",
                 TaskStatus.IN_PROGRESS, sTask1.getId(), Duration.ofSeconds(234322), LocalDateTime.now());
         manager.updatingSubtask(new1);

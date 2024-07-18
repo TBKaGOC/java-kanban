@@ -1,6 +1,7 @@
 package main.manager;
 
 import main.exception.IntersectionOfTasksException;
+import main.exception.NotFoundException;
 import main.model.*;
 
 import java.util.*;
@@ -39,17 +40,22 @@ public class InMemoryTaskManager implements TaskManager {
     }
 
     @Override
-    public Map<Integer, Subtask> getSubtasksOfEpic(int epicId) {
+    public Map<Integer, Subtask> getSubtasksOfEpic(int epicId) throws NotFoundException {
         if (epicTasks.containsKey(epicId)) {
             return epicTasks.get(epicId).getSubtasks();
         } else {
-            return null;
+            throw new NotFoundException();
         }
     }
 
     @Override
     public Set<Task> getSortedTask() {
         return sortedTasks;
+    }
+
+    @Override
+    public HistoryManager getHistory() {
+        return history;
     }
 
     //Удаление всех задач
@@ -109,6 +115,10 @@ public class InMemoryTaskManager implements TaskManager {
     @Override
     public Optional<Task> getTask(int id) {
         history.add(tasks.get(id));
+        if (tasks.get(id) == null) {
+            return Optional.empty();
+        }
+
         return Optional.of(tasks.get(id));
     }
 
@@ -176,13 +186,8 @@ public class InMemoryTaskManager implements TaskManager {
 
     //Обновление задачи
     @Override
-    public void updatingTask(Task task) {
+    public void updatingTask(Task task) throws IntersectionOfTasksException {
         if (tasks.containsKey(id)) {
-            if (sortedTasks.contains(task)) {
-                sortedTasks.remove(task);
-                sortedTasks.add(task);
-            }
-
             int id = task.getId();
             tasks.replace(id, task);
         }
@@ -202,7 +207,7 @@ public class InMemoryTaskManager implements TaskManager {
     }
 
     @Override
-    public void updatingSubtask(Subtask sub) {
+    public void updatingSubtask(Subtask sub) throws IntersectionOfTasksException {
         int id = sub.getId();
         if (subtasks.containsKey(id)) {
             subtasks.replace(id, sub);
@@ -211,13 +216,6 @@ public class InMemoryTaskManager implements TaskManager {
                 epic.updatingSubtask(id, sub);
                 setEpicTaskStatus(epic);
             });
-
-            Set<Task> newSet = sortedTasks.stream()
-                    .filter(e -> e.getType() != TaskType.EPIC_TASK)
-                    .collect(Collectors.toSet());
-
-            sortedTasks = new TreeSet<>(Comparator.comparing(Task::getStartTime));
-            sortedTasks.addAll(newSet);
         }
     }
 

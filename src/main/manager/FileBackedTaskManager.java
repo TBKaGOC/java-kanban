@@ -146,7 +146,7 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
     }
 
     @Override
-    public void updatingTask(Task task) {
+    public void updatingTask(Task task) throws IntersectionOfTasksException {
         super.updatingTask(task);
         save();
     }
@@ -158,7 +158,7 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
     }
 
     @Override
-    public void updatingSubtask(Subtask sub) {
+    public void updatingSubtask(Subtask sub) throws IntersectionOfTasksException {
         super.updatingSubtask(sub);
         save();
     }

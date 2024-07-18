@@ -13,15 +13,22 @@ public class Main {
     public static void main(String[] args) throws IntersectionOfTasksException {
         TaskManager manager = Managers.getDefault();
 
-        Task t1 = new Task("t1", "newT1", TaskStatus.NEW, InMemoryTaskManager.getNewId(), Duration.ofSeconds(234322), LocalDateTime.now());
-        Task t2 = new Task("t2", "newT2", TaskStatus.IN_PROGRESS, InMemoryTaskManager.getNewId(), Duration.ofSeconds(234322), LocalDateTime.now());
+        Task t1 = new Task("t1", "newT1", TaskStatus.NEW, InMemoryTaskManager.getNewId(),
+                Duration.ofSeconds(1), LocalDateTime.now());
+        Task t2 = new Task("t2", "newT2", TaskStatus.IN_PROGRESS, InMemoryTaskManager.getNewId(),
+                Duration.ofSeconds(1), LocalDateTime.now().minusSeconds(1000));
 
-        EpicTask e1 = new EpicTask("e1", "newE1", TaskStatus.NEW, InMemoryTaskManager.getNewId(), Duration.ofSeconds(234322), LocalDateTime.now());
-        EpicTask e2 = new EpicTask("e2", "newE2", TaskStatus.IN_PROGRESS, InMemoryTaskManager.getNewId(), Duration.ofSeconds(234322), LocalDateTime.now());
+        EpicTask e1 = new EpicTask("e1", "newE1", TaskStatus.NEW, InMemoryTaskManager.getNewId(),
+                Duration.ofSeconds(1), LocalDateTime.now().minusSeconds(2000));
+        EpicTask e2 = new EpicTask("e2", "newE2", TaskStatus.IN_PROGRESS, InMemoryTaskManager.getNewId(),
+                Duration.ofSeconds(1), LocalDateTime.now().minusSeconds(3000));
 
-        Subtask s1 = new Subtask("s1", "newS1", TaskStatus.NEW, InMemoryTaskManager.getNewId(), Duration.ofSeconds(234322), LocalDateTime.now());
-        Subtask s2 = new Subtask("s2", "newS2", TaskStatus.IN_PROGRESS, InMemoryTaskManager.getNewId(), Duration.ofSeconds(234322), LocalDateTime.now());
-        Subtask s3 = new Subtask("s3", "newS3", TaskStatus.DONE, InMemoryTaskManager.getNewId(), Duration.ofSeconds(234322), LocalDateTime.now());
+        Subtask s1 = new Subtask("s1", "newS1", TaskStatus.NEW, InMemoryTaskManager.getNewId(),
+                Duration.ofSeconds(1), LocalDateTime.now().minusSeconds(4000));
+        Subtask s2 = new Subtask("s2", "newS2", TaskStatus.IN_PROGRESS, InMemoryTaskManager.getNewId(),
+                Duration.ofSeconds(1), LocalDateTime.now().minusSeconds(5000));
+        Subtask s3 = new Subtask("s3", "newS3", TaskStatus.DONE, InMemoryTaskManager.getNewId(),
+                Duration.ofSeconds(1), LocalDateTime.now().minusSeconds(6000));
 
         manager.addTask(t1);
         manager.addTask(t2);

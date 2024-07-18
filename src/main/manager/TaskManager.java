@@ -1,6 +1,7 @@
 package main.manager;
 
 import main.exception.IntersectionOfTasksException;
+import main.exception.NotFoundException;
 import main.model.*;
 
 import java.util.Map;
@@ -15,9 +16,11 @@ public interface TaskManager {
 
     Map<Integer, Subtask> getSubtasks();
 
-    Map<Integer, Subtask> getSubtasksOfEpic(int epicId);
+    Map<Integer, Subtask> getSubtasksOfEpic(int epicId) throws NotFoundException;
 
     Set<Task> getSortedTask();
+
+    HistoryManager getHistory();
 
     //Удаление всех задач
     void deleteAllTasks();
@@ -41,11 +44,11 @@ public interface TaskManager {
     void addSubtask(Subtask sub, int epicTaskId) throws IntersectionOfTasksException;
 
     //Обновление задачи
-    void updatingTask(Task task);
+    void updatingTask(Task task) throws IntersectionOfTasksException;
 
     void updatingEpicTask(EpicTask epic);
 
-    void updatingSubtask(Subtask s);
+    void updatingSubtask(Subtask s) throws IntersectionOfTasksException;
 
     //Удаление определённых задач
     void deleteTask(int id);
