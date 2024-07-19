@@ -152,6 +152,12 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
     }
 
     @Override
+    public void updatingEpicTask(EpicTask epic) {
+        super.updatingEpicTask(epic);
+        save();
+    }
+
+    @Override
     public void updatingSubtask(Subtask sub) throws IntersectionOfTasksException {
         super.updatingSubtask(sub);
         save();
