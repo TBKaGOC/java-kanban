@@ -1,6 +1,5 @@
 package main.server.handlers;
 
-import com.google.gson.*;
 import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpHandler;
 import main.exception.IntersectionOfTasksException;

@@ -1,6 +1,5 @@
 package main.server.handlers;
 
-import com.google.gson.Gson;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonParser;
 import com.sun.net.httpserver.HttpExchange;
@@ -64,9 +63,8 @@ public class EpicsHandler extends BaseHttpHandler implements HttpHandler {
                     break;
                 case "DELETE":
                     String[] elementsOfDeletePath = exchange.getRequestURI().getPath().split("/");
-                    int deleteTaskId = Integer.parseInt(elementsOfDeletePath[2]);
 
-                    manager.deleteEpicTask(deleteTaskId);
+                    manager.deleteEpicTask(Integer.parseInt(elementsOfDeletePath[2]));
 
                     exchange.sendResponseHeaders(200, 0);
                     break;
