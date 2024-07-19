@@ -46,8 +46,6 @@ public interface TaskManager {
     //Обновление задачи
     void updatingTask(Task task) throws IntersectionOfTasksException;
 
-    void updatingEpicTask(EpicTask epic);
-
     void updatingSubtask(Subtask s) throws IntersectionOfTasksException;
 
     //Удаление определённых задач

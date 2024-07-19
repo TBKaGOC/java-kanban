@@ -23,10 +23,11 @@ public class HttpTaskServer {
         server.createContext("/prioritized", new PrioritizedHandler(manager));
     }
 
-    public static void main(String[] args) throws IOException {
+    public static void main(String[] args) throws IOException, InterruptedException {
         HttpTaskServer httpTaskServer = new HttpTaskServer(Managers.getDefault());
 
         httpTaskServer.start();
+        Thread.sleep(60000);
         httpTaskServer.stop();
     }
 

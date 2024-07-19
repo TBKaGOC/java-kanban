@@ -54,13 +54,9 @@ public class EpicsHandler extends BaseHttpHandler implements HttpHandler {
                         JsonElement jsonElement = JsonParser.parseReader(stream);
 
                         if (jsonElement.isJsonObject()) {
-                            EpicTask task = new Gson().fromJson(jsonElement, EpicTask.class);
-                            if (task.getId() == 0) {
+                            EpicTask task = gson.fromJson(jsonElement, EpicTask.class);
                                 task.setId(InMemoryTaskManager.getNewId());
                                 manager.addEpicTask(task);
-                            } else {
-                                manager.updatingEpicTask(task);
-                            }
 
                             exchange.sendResponseHeaders(201, 0);
                         }
@@ -70,7 +66,7 @@ public class EpicsHandler extends BaseHttpHandler implements HttpHandler {
                     String[] elementsOfDeletePath = exchange.getRequestURI().getPath().split("/");
                     int deleteTaskId = Integer.parseInt(elementsOfDeletePath[2]);
 
-                    manager.getEpicTask(deleteTaskId);
+                    manager.deleteEpicTask(deleteTaskId);
 
                     exchange.sendResponseHeaders(200, 0);
                     break;

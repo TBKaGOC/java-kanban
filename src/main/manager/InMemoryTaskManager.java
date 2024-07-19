@@ -125,12 +125,20 @@ public class InMemoryTaskManager implements TaskManager {
     @Override
     public Optional<EpicTask> getEpicTask(int id) {
         history.add(epicTasks.get(id));
+        if (epicTasks.get(id) == null) {
+            return Optional.empty();
+        }
+
         return Optional.of(epicTasks.get(id));
     }
 
     @Override
     public Optional<Subtask> getSubtask(int id) {
         history.add(subtasks.get(id));
+        if (subtasks.get(id) == null) {
+            return Optional.empty();
+        }
+
         return Optional.of(subtasks.get(id));
     }
 
@@ -148,7 +156,6 @@ public class InMemoryTaskManager implements TaskManager {
             }
 
             sortedTasks.add(task);
-
         }
     }
 
@@ -190,19 +197,17 @@ public class InMemoryTaskManager implements TaskManager {
         if (tasks.containsKey(id)) {
             int id = task.getId();
             tasks.replace(id, task);
-        }
-    }
 
-    @Override
-    public void updatingEpicTask(EpicTask epic) {
-        if (epicTasks.containsValue(epic)) {
-            if (sortedTasks.contains(epic)) {
-                sortedTasks.remove(epic);
-                sortedTasks.add(epic);
+            if (!task.getStartTime().equals(Task.getNullLocalDateTime())) {
+                sortedTasks.remove(task);
+                for (Task t : sortedTasks) {
+                    if (isTaskIntersect(task, t)) {
+                        throw new IntersectionOfTasksException();
+                    }
+                }
+
+                sortedTasks.add(task);
             }
-
-            int id = epic.getId();
-            epicTasks.replace(id, epic);
         }
     }
 
@@ -212,10 +217,22 @@ public class InMemoryTaskManager implements TaskManager {
         if (subtasks.containsKey(id)) {
             subtasks.replace(id, sub);
 
-            epicTasks.values().forEach(epic -> {
-                epic.updatingSubtask(id, sub);
-                setEpicTaskStatus(epic);
-            });
+            for (EpicTask task: epicTasks.values()) {
+                task.updatingSubtask(id, sub);
+                setEpicTaskStatus(task);
+
+                if (task.containsSubtask(sub.getId()) && !task.getStartTime().equals(EpicTask.getNullLocalDateTime())) {
+                    sortedTasks.remove(task);
+
+                    for (Task t : sortedTasks) {
+                        if (isTaskIntersect(task, t)) {
+                            throw new IntersectionOfTasksException();
+                        }
+                    }
+
+                    sortedTasks.add(task);
+                }
+            }
         }
     }
 
@@ -292,6 +309,10 @@ public class InMemoryTaskManager implements TaskManager {
     }
 
     public static boolean isTaskIntersect(Task newTask, Task savedTask) {
+        if (newTask.equals(savedTask)) {
+            return false;
+        }
+
         if (newTask.getStartTime().isBefore(savedTask.getEndTime()) &&
                 newTask.getEndTime().isAfter(savedTask.getStartTime())) {
             return true;
