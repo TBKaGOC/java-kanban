@@ -6,7 +6,6 @@ import main.manager.Managers;
 import main.manager.TaskManager;
 import main.model.EpicTask;
 import main.model.Subtask;
-import main.model.Task;
 import main.model.TaskStatus;
 import main.server.HttpTaskServer;
 import main.server.handlers.BaseHttpHandler;
@@ -22,7 +21,7 @@ import java.time.LocalDateTime;
 
 public class EpicsTest {
     private static HttpTaskServer server;
-    private final static Gson gson = BaseHttpHandler.gson;
+    private final Gson gson = BaseHttpHandler.gson;
     private static TaskManager manager;
 
     private final EpicTask eTask1 = new EpicTask("1task", "1thForExamination", TaskStatus.NEW,

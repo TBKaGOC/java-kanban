@@ -21,7 +21,7 @@ import java.time.LocalDateTime;
 
 public class SubtasksTest {
     private static HttpTaskServer server;
-    private final static Gson gson = BaseHttpHandler.gson;
+    private final Gson gson = BaseHttpHandler.gson;
     private static TaskManager manager;
 
     private final EpicTask eTask1 = new EpicTask("1task", "1thForExamination", TaskStatus.NEW,

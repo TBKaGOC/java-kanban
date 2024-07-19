@@ -20,7 +20,7 @@ import java.time.LocalDateTime;
 
 public class TasksTest {
     private static HttpTaskServer server;
-    private final static Gson gson = BaseHttpHandler.gson;
+    private final Gson gson = BaseHttpHandler.gson;
     private static TaskManager manager;
 
     private final Task task1 = new Task("1task", "1thForExamination", TaskStatus.NEW,

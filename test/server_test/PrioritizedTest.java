@@ -22,7 +22,7 @@ import java.time.LocalDateTime;
 
 public class PrioritizedTest {
     private static HttpTaskServer server;
-    private final static Gson gson = BaseHttpHandler.gson;
+    private final Gson gson = BaseHttpHandler.gson;
 
     private static TaskManager manager;
 
