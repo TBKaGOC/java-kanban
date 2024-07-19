@@ -168,6 +168,14 @@ public abstract class TaskManagerTest<T extends TaskManager> {
     }
 
     @Test
+    public void shouldUpdateEpicTaskInMemory() {
+        EpicTask new1 = new EpicTask("1taskNew", "1thForExaminationNew",
+                TaskStatus.IN_PROGRESS, eTask1.getId(), Duration.ofSeconds(1), LocalDateTime.now());
+        manager.updatingEpicTask(new1);
+        Assertions.assertEquals(manager.getEpicTask(new1.getId()).get(), new1);
+    }
+
+    @Test
     public void shouldUpdateSubtaskInMemory() throws Exception {
         Subtask new1 = new Subtask("1taskNew", "1thForExaminationNew",
                 TaskStatus.IN_PROGRESS, sTask1.getId(), Duration.ofSeconds(1), LocalDateTime.now().minusSeconds(7500));

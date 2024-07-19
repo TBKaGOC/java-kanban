@@ -212,6 +212,19 @@ public class InMemoryTaskManager implements TaskManager {
     }
 
     @Override
+    public void updatingEpicTask(EpicTask epic) {
+        if (epicTasks.containsValue(epic)) {
+            if (sortedTasks.contains(epic)) {
+                sortedTasks.remove(epic);
+                sortedTasks.add(epic);
+            }
+
+            int id = epic.getId();
+            epicTasks.replace(id, epic);
+        }
+    }
+
+    @Override
     public void updatingSubtask(Subtask sub) throws IntersectionOfTasksException {
         int id = sub.getId();
         if (subtasks.containsKey(id)) {
