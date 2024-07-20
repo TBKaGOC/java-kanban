@@ -67,9 +67,8 @@ public class PrioritizedTest {
 
     @BeforeEach
     public void addAll() throws Exception {
-        manager.deleteAllTasks();
-        manager.deleteAllEpicTasks();
-        manager.deleteAllSubtasks();
+        manager = new InMemoryTaskManager(Managers.getDefaultHistory());
+        server.setTaskManager(manager);
         Managers.getDefaultHistory().remove();
 
         manager.addTask(task1);

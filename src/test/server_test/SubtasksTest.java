@@ -23,7 +23,7 @@ public class SubtasksTest {
     private static HttpTaskServer server;
     private final Gson gson = BaseHttpHandler.gson;
     private static TaskManager manager;
-
+    private static HttpClient client;
     private final EpicTask eTask1 = new EpicTask("1task", "1thForExamination", TaskStatus.NEW,
             InMemoryTaskManager.getNewId(), Duration.ofSeconds(1), LocalDateTime.now().minusSeconds(4000));
     private final Subtask task1 = new Subtask("1task", "1thForExamination", TaskStatus.NEW,
@@ -34,22 +34,23 @@ public class SubtasksTest {
             InMemoryTaskManager.getNewId(), Duration.ofSeconds(1), LocalDateTime.now().minusSeconds(3000));
 
     @BeforeAll
-    public static void startServer() throws IOException {
+    public static void start() throws IOException {
         server = new HttpTaskServer(Managers.getDefault());
         manager = Managers.getDefault();
+        client = HttpClient.newHttpClient();
         server.start();
     }
 
     @AfterAll
-    public static void stopServer() {
+    public static void stop() {
+        client.close();
         server.stop();
     }
 
     @BeforeEach
     public void addAll() throws Exception {
-        manager.deleteAllTasks();
-        manager.deleteAllEpicTasks();
-        manager.deleteAllSubtasks();
+        manager = new InMemoryTaskManager(Managers.getDefaultHistory());
+        server.setTaskManager(manager);
         Managers.getDefaultHistory().remove();
 
         manager.addEpicTask(eTask1);
@@ -60,11 +61,8 @@ public class SubtasksTest {
 
     @Test
     public void shouldWeGetAllSubtasks() throws IOException, InterruptedException {
-        HttpClient client = HttpClient.newHttpClient();
-        URI uri = URI.create("http://localhost:" + HttpTaskServer.PORT + "/subtasks");
-        HttpRequest request = HttpRequest.newBuilder()
+        HttpRequest request = createRequest("")
                 .GET()
-                .uri(uri)
                 .build();
 
         HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
@@ -72,16 +70,12 @@ public class SubtasksTest {
         String jsonSorted = gson.toJson(manager.getSubtasks());
 
         Assertions.assertEquals(response.body(), jsonSorted);
-        client.close();
     }
 
     @Test
     public void shouldWeGetSubtaskById() throws IOException, InterruptedException {
-        HttpClient client = HttpClient.newHttpClient();
-        URI uri = URI.create("http://localhost:" + HttpTaskServer.PORT + "/subtasks/" + task1.getId());
-        HttpRequest request = HttpRequest.newBuilder()
+        HttpRequest request = createRequest(String.valueOf(task1.getId()))
                 .GET()
-                .uri(uri)
                 .build();
 
         HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
@@ -89,23 +83,18 @@ public class SubtasksTest {
         String jsonSorted = gson.toJson(manager.getSubtask(task1.getId()).get());
 
         Assertions.assertEquals(response.body(), jsonSorted);
-        client.close();
     }
 
     @Test
     public void shouldWeGet404WhenSubtaskNotFound() throws IOException, InterruptedException {
-        HttpClient client = HttpClient.newHttpClient();
-        URI uri = URI.create("http://localhost:" + HttpTaskServer.PORT + "/subtasks/" + 100000);
-        HttpRequest request = HttpRequest.newBuilder()
+        HttpRequest request = createRequest("1231244")
                 .GET()
-                .uri(uri)
                 .build();
 
         HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
 
         Assertions.assertEquals(response.statusCode(), 404);
         Assertions.assertEquals(response.body(), "The task not founded.");
-        client.close();
     }
 
     @Test
@@ -114,11 +103,8 @@ public class SubtasksTest {
         task1.setId(0);
         String jsonTask = gson.toJson(task1);
         String jsonResponse = "{\"epicTaskId\":" + eTask1.getId() + ",\"subtask\":" + jsonTask + "}";
-        HttpClient client = HttpClient.newHttpClient();
-        URI uri = URI.create("http://localhost:" + HttpTaskServer.PORT + "/subtasks/");
-        HttpRequest request = HttpRequest.newBuilder()
+        HttpRequest request = createRequest("")
                 .POST(HttpRequest.BodyPublishers.ofString(jsonResponse))
-                .uri(uri)
                 .build();
 
         HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
@@ -126,7 +112,6 @@ public class SubtasksTest {
         task1.setId(InMemoryTaskManager.getNewId() - 1);
         Assertions.assertEquals(response.statusCode(), 201);
         Assertions.assertTrue(manager.containsTask(task1));
-        client.close();
     }
 
     @Test
@@ -137,18 +122,14 @@ public class SubtasksTest {
         task1.setDuration(Duration.ofSeconds(15000));
         String jsonTask = gson.toJson(task1);
         String jsonResponse = "{\"epicTaskId\":" + eTask1.getId() + ",\"subtask\":" + jsonTask + "}";
-        HttpClient client = HttpClient.newHttpClient();
-        URI uri = URI.create("http://localhost:" + HttpTaskServer.PORT + "/subtasks/");
-        HttpRequest request = HttpRequest.newBuilder()
+        HttpRequest request = createRequest("")
                 .POST(HttpRequest.BodyPublishers.ofString(jsonResponse))
-                .uri(uri)
                 .build();
 
         HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
 
         task1.setId(InMemoryTaskManager.getNewId() - 1);
         Assertions.assertEquals(response.statusCode(), 406);
-        client.close();
     }
 
     @Test
@@ -156,19 +137,14 @@ public class SubtasksTest {
         Subtask task = new Subtask("newTask", "newTask", TaskStatus.NEW,
                 task1.getId(), task1.getDuration(), task1.getStartTime());
         String jsonTask = gson.toJson(task);
-        HttpClient client = HttpClient.newHttpClient();
-        URI uri = URI.create("http://localhost:" + HttpTaskServer.PORT + "/subtasks/" + task1.getId());
-        HttpRequest request = HttpRequest.newBuilder()
+        HttpRequest request = createRequest(String.valueOf(task1.getId()))
                 .POST(HttpRequest.BodyPublishers.ofString(jsonTask))
-                .uri(uri)
                 .build();
 
         HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
 
         Assertions.assertEquals(response.statusCode(), 201);
         Assertions.assertEquals(task.getTitle(), manager.getSubtask(task1.getId()).get().getTitle());
-
-        client.close();
     }
 
     @Test
@@ -176,34 +152,32 @@ public class SubtasksTest {
         Subtask task = new Subtask("newTask", "newTask", TaskStatus.NEW,
                 task1.getId(), Duration.ofDays(384598340), LocalDateTime.now().minusDays(51));
         String jsonTask = gson.toJson(task);
-        HttpClient client = HttpClient.newHttpClient();
-        URI uri = URI.create("http://localhost:" + HttpTaskServer.PORT + "/subtasks/");
-        HttpRequest request = HttpRequest.newBuilder()
+        HttpRequest request = createRequest("")
                 .POST(HttpRequest.BodyPublishers.ofString(jsonTask))
-                .uri(uri)
                 .build();
 
         HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
 
         Assertions.assertEquals(response.statusCode(), 406);
         Assertions.assertEquals(response.body(), "The tasks should not intersections.");
-
-        client.close();
     }
 
     @Test
     public void shouldWeDeleteSubtask() throws IOException, InterruptedException {
-        HttpClient client = HttpClient.newHttpClient();
-        URI uri = URI.create("http://localhost:" + HttpTaskServer.PORT + "/subtasks/" + task1.getId());
-        HttpRequest request = HttpRequest.newBuilder()
+        HttpRequest request = createRequest(String.valueOf(task1.getId()))
                 .DELETE()
-                .uri(uri)
                 .build();
 
         HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
 
         Assertions.assertEquals(response.statusCode(), 200);
         Assertions.assertFalse(manager.containsTask(task1));
-        client.close();
+    }
+
+    private HttpRequest.Builder createRequest(String path) {
+        URI uri = URI.create("http://localhost:" + HttpTaskServer.PORT + "/subtasks/" + path);
+
+        return HttpRequest.newBuilder()
+                .uri(uri);
     }
 }

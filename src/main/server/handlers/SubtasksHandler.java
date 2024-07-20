@@ -14,7 +14,6 @@ import main.model.Subtask;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.util.Optional;
 
 public class SubtasksHandler extends BaseHttpHandler implements HttpHandler {
     public SubtasksHandler(TaskManager manager) {
@@ -29,14 +28,10 @@ public class SubtasksHandler extends BaseHttpHandler implements HttpHandler {
                     String[] elementsOfPath = exchange.getRequestURI().getPath().split("/");
                     if (elementsOfPath.length == 3) {
                         int taskId = Integer.parseInt(elementsOfPath[2]);
-                        Optional<Subtask> task = manager.getSubtask(taskId);
+                        Subtask task = manager.getSubtask(taskId).orElseThrow(NotFoundException::new);
+                        String gsonTask = gson.toJson(task);
 
-                        if (task.isEmpty()) {
-                            throw new NotFoundException();
-                        } else {
-                            String gsonTask = gson.toJson(task.get());
-                            sendText(gsonTask, exchange);
-                        }
+                        sendText(gsonTask, exchange);
                     } else {
                         String gsonTaskList = gson.toJson(manager.getSubtasks());
                         sendText(gsonTaskList, exchange);

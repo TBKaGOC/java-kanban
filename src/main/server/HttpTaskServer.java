@@ -40,4 +40,18 @@ public class HttpTaskServer {
         server.stop(0);
         System.out.println("Stopped server " + PORT);
     }
+
+    public void setTaskManager(TaskManager manager) {
+        server.removeContext("/tasks");
+        server.removeContext("/subtasks");
+        server.removeContext("/epics");
+        server.removeContext("/history");
+        server.removeContext("/prioritized");
+
+        server.createContext("/tasks", new TasksHandler(manager));
+        server.createContext("/subtasks", new SubtasksHandler(manager));
+        server.createContext("/epics", new EpicsHandler(manager));
+        server.createContext("/history", new HistoryHandler(manager));
+        server.createContext("/prioritized", new PrioritizedHandler(manager));
+    }
 }

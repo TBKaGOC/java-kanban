@@ -9,7 +9,6 @@ import main.manager.TaskManager;
 import main.model.Task;
 
 import java.io.*;
-import java.util.Optional;
 
 public class TasksHandler extends BaseHttpHandler implements HttpHandler {
     public TasksHandler(TaskManager manager) {
@@ -24,14 +23,10 @@ public class TasksHandler extends BaseHttpHandler implements HttpHandler {
                     String[] elementsOfPath = exchange.getRequestURI().getPath().split("/");
                     if (elementsOfPath.length == 3) {
                         int taskId = Integer.parseInt(elementsOfPath[2]);
-                        Optional<Task> task = manager.getTask(taskId);
+                        Task task = manager.getTask(taskId).orElseThrow(NotFoundException::new);
+                        String gsonTask = gson.toJson(task);
 
-                        if (task.isEmpty()) {
-                            throw new NotFoundException();
-                        } else {
-                            String gsonTask = gson.toJson(task.get());
-                            sendText(gsonTask, exchange);
-                        }
+                        sendText(gsonTask, exchange);
                     } else {
                         String gsonTaskList = gson.toJson(manager.getTasks());
                         sendText(gsonTaskList, exchange);

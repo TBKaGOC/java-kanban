@@ -20,6 +20,7 @@ import java.time.LocalDateTime;
 
 public class TasksTest {
     private static HttpTaskServer server;
+    private static HttpClient client;
     private final Gson gson = BaseHttpHandler.gson;
     private static TaskManager manager;
 
@@ -31,22 +32,23 @@ public class TasksTest {
             InMemoryTaskManager.getNewId(), Duration.ofSeconds(1), LocalDateTime.now().minusSeconds(3000));
 
     @BeforeAll
-    public static void startServer() throws IOException {
+    public static void start() throws IOException {
         server = new HttpTaskServer(Managers.getDefault());
         manager = Managers.getDefault();
         server.start();
+        client = HttpClient.newHttpClient();
     }
 
     @AfterAll
-    public static void stopServer() {
+    public static void stop() {
         server.stop();
+        client.close();
     }
 
     @BeforeEach
     public void addAll() throws Exception {
-        manager.deleteAllTasks();
-        manager.deleteAllEpicTasks();
-        manager.deleteAllSubtasks();
+        manager = new InMemoryTaskManager(Managers.getDefaultHistory());
+        server.setTaskManager(manager);
         Managers.getDefaultHistory().remove();
 
         manager.addTask(task1);
@@ -56,11 +58,8 @@ public class TasksTest {
 
     @Test
     public void shouldWeGetAllTask() throws IOException, InterruptedException {
-        HttpClient client = HttpClient.newHttpClient();
-        URI uri = URI.create("http://localhost:" + HttpTaskServer.PORT + "/tasks");
-        HttpRequest request = HttpRequest.newBuilder()
+        HttpRequest request = createRequest("")
                 .GET()
-                .uri(uri)
                 .build();
 
         HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
@@ -68,16 +67,12 @@ public class TasksTest {
         String jsonSorted = gson.toJson(manager.getTasks());
 
         Assertions.assertEquals(response.body(), jsonSorted);
-        client.close();
     }
 
     @Test
     public void shouldWeGetTaskById() throws IOException, InterruptedException {
-        HttpClient client = HttpClient.newHttpClient();
-        URI uri = URI.create("http://localhost:" + HttpTaskServer.PORT + "/tasks/" + task1.getId());
-        HttpRequest request = HttpRequest.newBuilder()
+        HttpRequest request = createRequest(String.valueOf(task1.getId()))
                 .GET()
-                .uri(uri)
                 .build();
 
         HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
@@ -85,23 +80,18 @@ public class TasksTest {
         String jsonSorted = gson.toJson(manager.getTask(task1.getId()).get());
 
         Assertions.assertEquals(response.body(), jsonSorted);
-        client.close();
     }
 
     @Test
     public void shouldWeGet404WhenTaskNotFound() throws IOException, InterruptedException {
-        HttpClient client = HttpClient.newHttpClient();
-        URI uri = URI.create("http://localhost:" + HttpTaskServer.PORT + "/tasks/" + 100000);
-        HttpRequest request = HttpRequest.newBuilder()
+        HttpRequest request = createRequest("10001010")
                 .GET()
-                .uri(uri)
                 .build();
 
         HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
 
         Assertions.assertEquals(response.statusCode(), 404);
         Assertions.assertEquals(response.body(), "The task not founded.");
-        client.close();
     }
 
     @Test
@@ -109,11 +99,8 @@ public class TasksTest {
         manager.deleteTask(task1.getId());
         task1.setId(0);
         String jsonTask = gson.toJson(task1);
-        HttpClient client = HttpClient.newHttpClient();
-        URI uri = URI.create("http://localhost:" + HttpTaskServer.PORT + "/tasks/");
-        HttpRequest request = HttpRequest.newBuilder()
+        HttpRequest request = createRequest("")
                 .POST(HttpRequest.BodyPublishers.ofString(jsonTask))
-                .uri(uri)
                 .build();
 
         HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
@@ -121,7 +108,6 @@ public class TasksTest {
         task1.setId(InMemoryTaskManager.getNewId() - 1);
         Assertions.assertEquals(response.statusCode(), 201);
         Assertions.assertTrue(manager.containsTask(task1));
-        client.close();
     }
 
     @Test
@@ -130,18 +116,14 @@ public class TasksTest {
         task1.setId(0);
         task1.setStartTime(task2.getStartTime());
         String jsonTask = gson.toJson(task1);
-        HttpClient client = HttpClient.newHttpClient();
-        URI uri = URI.create("http://localhost:" + HttpTaskServer.PORT + "/tasks/");
-        HttpRequest request = HttpRequest.newBuilder()
+        HttpRequest request = createRequest("")
                 .POST(HttpRequest.BodyPublishers.ofString(jsonTask))
-                .uri(uri)
                 .build();
 
         HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
 
         task1.setId(InMemoryTaskManager.getNewId() - 1);
         Assertions.assertEquals(response.statusCode(), 406);
-        client.close();
     }
 
     @Test
@@ -149,19 +131,14 @@ public class TasksTest {
         Task task = new Task("newTask", "newTask", TaskStatus.NEW,
                 task1.getId(), task1.getDuration(), task1.getStartTime());
         String jsonTask = gson.toJson(task);
-        HttpClient client = HttpClient.newHttpClient();
-        URI uri = URI.create("http://localhost:" + HttpTaskServer.PORT + "/tasks/");
-        HttpRequest request = HttpRequest.newBuilder()
+        HttpRequest request = createRequest("")
                 .POST(HttpRequest.BodyPublishers.ofString(jsonTask))
-                .uri(uri)
                 .build();
 
         HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
 
         Assertions.assertEquals(response.statusCode(), 201);
         Assertions.assertEquals(task.getTitle(), manager.getTask(task1.getId()).get().getTitle());
-
-        client.close();
     }
 
     @Test
@@ -169,34 +146,32 @@ public class TasksTest {
         Task task = new Task("newTask", "newTask", TaskStatus.NEW,
                 task1.getId(), Duration.ofDays(384598340), LocalDateTime.now().minusDays(51));
         String jsonTask = gson.toJson(task);
-        HttpClient client = HttpClient.newHttpClient();
-        URI uri = URI.create("http://localhost:" + HttpTaskServer.PORT + "/tasks/");
-        HttpRequest request = HttpRequest.newBuilder()
+        HttpRequest request = createRequest("")
                 .POST(HttpRequest.BodyPublishers.ofString(jsonTask))
-                .uri(uri)
                 .build();
 
         HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
 
         Assertions.assertEquals(response.statusCode(), 406);
         Assertions.assertEquals(response.body(), "The tasks should not intersections.");
-
-        client.close();
     }
 
     @Test
     public void shouldWeDeleteTask() throws IOException, InterruptedException {
-        HttpClient client = HttpClient.newHttpClient();
-        URI uri = URI.create("http://localhost:" + HttpTaskServer.PORT + "/tasks/" + task1.getId());
-        HttpRequest request = HttpRequest.newBuilder()
+        HttpRequest request = createRequest(String.valueOf(task1.getId()))
                 .DELETE()
-                .uri(uri)
                 .build();
 
         HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
 
         Assertions.assertEquals(response.statusCode(), 200);
         Assertions.assertFalse(manager.containsTask(task1));
-        client.close();
+    }
+
+    private HttpRequest.Builder createRequest(String path) {
+        URI uri = URI.create("http://localhost:" + HttpTaskServer.PORT + "/tasks/" + path);
+
+        return HttpRequest.newBuilder()
+                .uri(uri);
     }
 }
