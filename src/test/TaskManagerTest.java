@@ -151,7 +151,7 @@ public abstract class TaskManagerTest<T extends TaskManager> {
     }
 
     @Test
-    public void shouldGetAllSubtaskOfEpicFromMemory() {
+    public void shouldGetAllSubtaskOfEpicFromMemory() throws Exception {
         HashMap<Integer, Subtask> allSubsOfEpic = new HashMap<>();
         allSubsOfEpic.put(sTask1.getId(), sTask1);
         allSubsOfEpic.put(sTask2.getId(), sTask2);
@@ -160,9 +160,9 @@ public abstract class TaskManagerTest<T extends TaskManager> {
     }
 
     @Test
-    public void shouldUpdateTaskInMemory() {
+    public void shouldUpdateTaskInMemory() throws Exception {
         Task new1 = new Task("1taskNew", "1thForExaminationNew",
-                TaskStatus.IN_PROGRESS, task1.getId(), Duration.ofSeconds(234322), LocalDateTime.now());
+                TaskStatus.IN_PROGRESS, task1.getId(), Duration.ofSeconds(1), LocalDateTime.now());
         manager.updatingTask(new1);
         Assertions.assertEquals(manager.getTask(new1.getId()).get(), new1);
     }
@@ -170,15 +170,15 @@ public abstract class TaskManagerTest<T extends TaskManager> {
     @Test
     public void shouldUpdateEpicTaskInMemory() {
         EpicTask new1 = new EpicTask("1taskNew", "1thForExaminationNew",
-                TaskStatus.IN_PROGRESS, eTask1.getId(), Duration.ofSeconds(234322), LocalDateTime.now());
+                TaskStatus.IN_PROGRESS, eTask1.getId(), Duration.ofSeconds(1), LocalDateTime.now());
         manager.updatingEpicTask(new1);
         Assertions.assertEquals(manager.getEpicTask(new1.getId()).get(), new1);
     }
 
     @Test
-    public void shouldUpdateSubtaskInMemory() {
+    public void shouldUpdateSubtaskInMemory() throws Exception {
         Subtask new1 = new Subtask("1taskNew", "1thForExaminationNew",
-                TaskStatus.IN_PROGRESS, sTask1.getId(), Duration.ofSeconds(234322), LocalDateTime.now());
+                TaskStatus.IN_PROGRESS, sTask1.getId(), Duration.ofSeconds(1), LocalDateTime.now().minusSeconds(7500));
         manager.updatingSubtask(new1);
         Assertions.assertEquals(manager.getSubtask(new1.getId()).get(), new1);
     }

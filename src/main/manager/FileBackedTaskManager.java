@@ -11,7 +11,7 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
 
-import static main.model.TaskStatus.getStatusFromString;
+import static main.model.TaskStatus.valueOf;
 
 public class FileBackedTaskManager extends InMemoryTaskManager {
     private File fileToSave;
@@ -66,7 +66,7 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
                         LocalDateTime startTime = LocalDateTime.parse(elementsOfEpic[6], pattern);
                         int idOfEpic = Integer.parseInt(elementsOfEpic[0]);
                         EpicTask epicTask = new EpicTask(elementsOfEpic[2], elementsOfEpic[4],
-                                getStatusFromString(elementsOfEpic[3]), idOfEpic, duration, startTime);
+                                valueOf(elementsOfEpic[3]), idOfEpic, duration, startTime);
                         getNewId();
 
                         resultForLoad.addEpicTask(epicTask);
@@ -81,7 +81,7 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
                         String[] elements = task.split(",");
                         Duration duration = Duration.ofSeconds(Long.parseLong(elements[5]));
                         LocalDateTime start = LocalDateTime.parse(elements[6], pattern);
-                        resultForLoad.addTask(new Task(elements[2], elements[4], getStatusFromString(elements[3]),
+                        resultForLoad.addTask(new Task(elements[2], elements[4], valueOf(elements[3]),
                                 Integer.parseInt(elements[0]), duration, start));
                         getNewId();
                     }
@@ -105,7 +105,7 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
         Duration durationOfSub = Duration.ofSeconds(Long.parseLong(elementsOfSubtask[5]));
         LocalDateTime startTimeOfSub = LocalDateTime.parse(elementsOfSubtask[6], pattern);
         return new Subtask(elementsOfSubtask[2], elementsOfSubtask[4],
-                getStatusFromString(elementsOfSubtask[3]),
+                valueOf(elementsOfSubtask[3]),
                 Integer.parseInt(elementsOfSubtask[0]), durationOfSub, startTimeOfSub);
     }
 
@@ -146,7 +146,7 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
     }
 
     @Override
-    public void updatingTask(Task task) {
+    public void updatingTask(Task task) throws IntersectionOfTasksException {
         super.updatingTask(task);
         save();
     }
@@ -158,7 +158,7 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
     }
 
     @Override
-    public void updatingSubtask(Subtask sub) {
+    public void updatingSubtask(Subtask sub) throws IntersectionOfTasksException {
         super.updatingSubtask(sub);
         save();
     }

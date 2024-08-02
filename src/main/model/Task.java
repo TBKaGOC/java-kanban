@@ -9,7 +9,7 @@ public class Task {
     private final String title;
     private final String description;
     private TaskStatus status;
-    private final int id;
+    private int id;
     private Duration duration;
     private LocalDateTime startTime;
     private LocalDateTime endTime;
@@ -62,6 +62,10 @@ public class Task {
 
     public int getId() {
         return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
     }
 
     public String getTitle() {

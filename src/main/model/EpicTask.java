@@ -106,10 +106,20 @@ public class EpicTask extends Task {
         return subtasks.containsKey(id);
     }
 
-    public void updatingSubtask(int id, Subtask sub) {
+    public void updatingSubtask(int id, Subtask sub) throws IntersectionOfTasksException {
         if (subtasks.containsKey(id)) {
             if (!sub.getStartTime().equals(getNullLocalDateTime())) {
                 sortedSubtask.remove(sub);
+                sortedSubtask.add(sub);
+            }
+            if (!sub.getStartTime().equals(Subtask.getNullLocalDateTime())) {
+                sortedSubtask.remove(sub);
+                for (Subtask t: sortedSubtask) {
+                    if (InMemoryTaskManager.isTaskIntersect(sub, t)) {
+                        throw new IntersectionOfTasksException();
+                    }
+                }
+
                 sortedSubtask.add(sub);
             }
 

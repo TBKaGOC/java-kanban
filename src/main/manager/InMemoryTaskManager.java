@@ -1,6 +1,7 @@
 package main.manager;
 
 import main.exception.IntersectionOfTasksException;
+import main.exception.NotFoundException;
 import main.model.*;
 
 import java.util.*;
@@ -39,17 +40,22 @@ public class InMemoryTaskManager implements TaskManager {
     }
 
     @Override
-    public Map<Integer, Subtask> getSubtasksOfEpic(int epicId) {
+    public Map<Integer, Subtask> getSubtasksOfEpic(int epicId) throws NotFoundException {
         if (epicTasks.containsKey(epicId)) {
             return epicTasks.get(epicId).getSubtasks();
         } else {
-            return null;
+            throw new NotFoundException();
         }
     }
 
     @Override
     public Set<Task> getSortedTask() {
         return sortedTasks;
+    }
+
+    @Override
+    public HistoryManager getHistory() {
+        return history;
     }
 
     //Удаление всех задач
@@ -109,18 +115,30 @@ public class InMemoryTaskManager implements TaskManager {
     @Override
     public Optional<Task> getTask(int id) {
         history.add(tasks.get(id));
+        if (tasks.get(id) == null) {
+            return Optional.empty();
+        }
+
         return Optional.of(tasks.get(id));
     }
 
     @Override
     public Optional<EpicTask> getEpicTask(int id) {
         history.add(epicTasks.get(id));
+        if (epicTasks.get(id) == null) {
+            return Optional.empty();
+        }
+
         return Optional.of(epicTasks.get(id));
     }
 
     @Override
     public Optional<Subtask> getSubtask(int id) {
         history.add(subtasks.get(id));
+        if (subtasks.get(id) == null) {
+            return Optional.empty();
+        }
+
         return Optional.of(subtasks.get(id));
     }
 
@@ -138,7 +156,6 @@ public class InMemoryTaskManager implements TaskManager {
             }
 
             sortedTasks.add(task);
-
         }
     }
 
@@ -176,15 +193,21 @@ public class InMemoryTaskManager implements TaskManager {
 
     //Обновление задачи
     @Override
-    public void updatingTask(Task task) {
+    public void updatingTask(Task task) throws IntersectionOfTasksException {
         if (tasks.containsKey(id)) {
-            if (sortedTasks.contains(task)) {
-                sortedTasks.remove(task);
-                sortedTasks.add(task);
-            }
-
             int id = task.getId();
             tasks.replace(id, task);
+
+            if (!task.getStartTime().equals(Task.getNullLocalDateTime())) {
+                sortedTasks.remove(task);
+                for (Task t : sortedTasks) {
+                    if (isTaskIntersect(task, t)) {
+                        throw new IntersectionOfTasksException();
+                    }
+                }
+
+                sortedTasks.add(task);
+            }
         }
     }
 
@@ -202,22 +225,27 @@ public class InMemoryTaskManager implements TaskManager {
     }
 
     @Override
-    public void updatingSubtask(Subtask sub) {
+    public void updatingSubtask(Subtask sub) throws IntersectionOfTasksException {
         int id = sub.getId();
         if (subtasks.containsKey(id)) {
             subtasks.replace(id, sub);
 
-            epicTasks.values().forEach(epic -> {
-                epic.updatingSubtask(id, sub);
-                setEpicTaskStatus(epic);
-            });
+            for (EpicTask task: epicTasks.values()) {
+                task.updatingSubtask(id, sub);
+                setEpicTaskStatus(task);
 
-            Set<Task> newSet = sortedTasks.stream()
-                    .filter(e -> e.getType() != TaskType.EPIC_TASK)
-                    .collect(Collectors.toSet());
+                if (task.containsSubtask(sub.getId()) && !task.getStartTime().equals(EpicTask.getNullLocalDateTime())) {
+                    sortedTasks.remove(task);
 
-            sortedTasks = new TreeSet<>(Comparator.comparing(Task::getStartTime));
-            sortedTasks.addAll(newSet);
+                    for (Task t : sortedTasks) {
+                        if (isTaskIntersect(task, t)) {
+                            throw new IntersectionOfTasksException();
+                        }
+                    }
+
+                    sortedTasks.add(task);
+                }
+            }
         }
     }
 
@@ -294,6 +322,10 @@ public class InMemoryTaskManager implements TaskManager {
     }
 
     public static boolean isTaskIntersect(Task newTask, Task savedTask) {
+        if (newTask.equals(savedTask)) {
+            return false;
+        }
+
         if (newTask.getStartTime().isBefore(savedTask.getEndTime()) &&
                 newTask.getEndTime().isAfter(savedTask.getStartTime())) {
             return true;
